@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.GyroSensor;
 
 import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Standard_Bot;
 import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.TankDrive;
@@ -30,6 +32,8 @@ public class Teleop extends LinearOpMode {
     private Servo outtakeServo = null;
     private Servo capperServo = null;
 
+    private GyroSensor boxGyro = null;
+
     HardwareMap hwMap =  null;
 
     @Override
@@ -49,8 +53,17 @@ public class Teleop extends LinearOpMode {
 
         capperServo = robot.StdCapperServo;
 
+        boxGyro = robot.StdGyroSensor;
+
+        double xValue = 0;
+        double yValue = 0;
+        double zValue = 0;
+
         waitForStart();
         runtime.reset();
+
+        while (boxGyro.isCalibrating()) {
+        }
 
         while (opModeIsActive()) {
 
@@ -77,7 +90,13 @@ public class Teleop extends LinearOpMode {
                 intakeMotor.setPower(-0.5);
             }
             while (gamepad2.y){
-                outtakeMotor.setPower(0.25);
+                xValue = boxGyro.rawX();
+                yValue = boxGyro.rawY();
+                zValue = boxGyro.rawZ();
+
+                outtakeMotor.setPower(0.1);
+
+
             }
             while (gamepad2.x){
                 outtakeMotor.setPower(-0.25);
@@ -109,6 +128,7 @@ public class Teleop extends LinearOpMode {
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Gyro Readings", String.valueOf(xValue), "x", String.valueOf(yValue), "y", String.valueOf(zValue), "z");
             //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
         }
