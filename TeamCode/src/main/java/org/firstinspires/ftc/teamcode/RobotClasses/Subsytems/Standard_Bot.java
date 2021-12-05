@@ -3,6 +3,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+import com.qualcomm.robotcore.hardware.GyroSensor;
 
 public class Standard_Bot {
 
@@ -16,6 +18,7 @@ public class Standard_Bot {
     public DcMotor StdOuttakeMotor = null;
     public Servo StdCapperServo = null;
     public Servo StdOuttakeServo = null;
+    public GyroSensor StdGyroSensor = null;
     //public DistanceSensor       StdDistanceSensor = null;
     //public Rev2mDistanceSensor  StdRevDistanceSensor = null;
 
@@ -43,6 +46,8 @@ public class Standard_Bot {
         StdOuttakeMotor = hwMap.get(DcMotor.class, "outtakeMotor");
         StdCapperServo = hwMap.get(Servo.class, "capperServo");
         StdOuttakeServo = hwMap.get(Servo.class, "outtakeServo");
+
+        StdGyroSensor = hwMap.get(GyroSensor.class, "boxGyro");
 
         //StdDistanceSensor = hwMap.get(DistanceSensor.class, "distanceSensor");
         //StdRevDistanceSensor = (Rev2mDistanceSensor)StdDistanceSensor;
