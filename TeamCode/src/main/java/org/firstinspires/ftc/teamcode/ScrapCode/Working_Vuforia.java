@@ -25,10 +25,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 //This OpMode was written for the VuforiaDemo Basics video. This demonstrates basic principles of
 //using VuforiaDemo in FTC.
-
-@Autonomous(name = "Vuforia_Tracking_Working")
-public class Working_Vuforia extends LinearOpMode
-{
+*/
+public class Working_Vuforia
+{}
+    /*
     // Variables to be used for later
     private VuforiaLocalizer vuforiaLocalizer;
     private VuforiaLocalizer.Parameters parameters;
