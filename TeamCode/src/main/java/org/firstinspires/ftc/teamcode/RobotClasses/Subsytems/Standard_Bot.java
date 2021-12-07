@@ -18,7 +18,7 @@ public class Standard_Bot {
     public DcMotor StdOuttakeMotor = null;
     public Servo StdCapperServo = null;
     public Servo StdOuttakeServo = null;
-    public GyroSensor StdGyroSensor = null;
+    public GyroSensor StdBoxGyro = null;
     //public DistanceSensor       StdDistanceSensor = null;
     //public Rev2mDistanceSensor  StdRevDistanceSensor = null;
 
@@ -47,7 +47,7 @@ public class Standard_Bot {
         StdCapperServo = hwMap.get(Servo.class, "capperServo");
         StdOuttakeServo = hwMap.get(Servo.class, "outtakeServo");
 
-        StdGyroSensor = hwMap.get(GyroSensor.class, "boxGyro");
+        StdBoxGyro = hwMap.get(GyroSensor.class, "boxGyro");
 
         //StdDistanceSensor = hwMap.get(DistanceSensor.class, "distanceSensor");
         //StdRevDistanceSensor = (Rev2mDistanceSensor)StdDistanceSensor;

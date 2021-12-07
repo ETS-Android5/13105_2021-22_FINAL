@@ -53,11 +53,19 @@ public class Teleop extends LinearOpMode {
 
         capperServo = robot.StdCapperServo;
 
-        boxGyro = robot.StdGyroSensor;
+        boxGyro = robot.StdBoxGyro;
 
-        double xValue = 0;
-        double yValue = 0;
-        double zValue = 0;
+        //GyroSensor sensorGyro;
+        //ModernRoboticsI2cGyro mrGyro;
+
+        //sensorGyro = hardwareMap.gyroSensor.get("boxgyro");
+        //boxGyro = (ModernRoboticsI2cGyro) sensorGyro;
+        boxGyro.calibrate();
+
+
+        int xValue = 0;
+        int yValue = 0;
+        int zValue = 0;
 
         waitForStart();
         runtime.reset();
@@ -66,6 +74,13 @@ public class Teleop extends LinearOpMode {
         }
 
         while (opModeIsActive()) {
+
+
+            xValue = boxGyro.rawX();
+            yValue = boxGyro.rawY();
+            zValue = boxGyro.rawZ();
+
+            outtakeMotor.setPower(0.1);
 
             intakeMotor.setPower(0);
             outtakeMotor.setPower(0);
@@ -90,11 +105,6 @@ public class Teleop extends LinearOpMode {
                 intakeMotor.setPower(-0.5);
             }
             while (gamepad2.y){
-                xValue = boxGyro.rawX();
-                yValue = boxGyro.rawY();
-                zValue = boxGyro.rawZ();
-
-                outtakeMotor.setPower(0.1);
 
 
             }
@@ -128,7 +138,9 @@ public class Teleop extends LinearOpMode {
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Gyro Readings", String.valueOf(xValue), "x", String.valueOf(yValue), "y", String.valueOf(zValue), "z");
+            telemetry.addData("zValue", String.valueOf(zValue));
+            //telemetry.addData("4. X", String.format("%03d", zValue));
+            //telemetry.addData("Gyro Reading", String.valueOf(xValue));//, "x", String.valueOf(yValue), "y", String.valueOf(zValue), "z");
             //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
         }
