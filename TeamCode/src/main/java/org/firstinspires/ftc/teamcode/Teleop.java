@@ -63,9 +63,11 @@ public class Teleop extends LinearOpMode {
         boxGyro.calibrate();
 
 
-        int xValue = 0;
-        int yValue = 0;
-        int zValue = 0;
+        double xValue = 0;
+        double yValue = 0;
+        double zValue = 0;
+        double currentHeading = 0;
+        double servoPosition = 0;
 
         waitForStart();
         runtime.reset();
@@ -75,7 +77,7 @@ public class Teleop extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-
+            currentHeading = boxGyro.getHeading();
             xValue = boxGyro.rawX();
             yValue = boxGyro.rawY();
             zValue = boxGyro.rawZ();
@@ -98,31 +100,58 @@ public class Teleop extends LinearOpMode {
             backLeft.setPower(drivePower + rotatePower);
             backRight.setPower(drivePower - rotatePower);
 
-            while (gamepad2.a){
+            if (currentHeading != 0){
+                servoPosition = currentHeading;
+                outtakeServo.setPosition(servoPosition);
+            }
+            if (gamepad2.a){
                 intakeMotor.setPower(0.5);
             }
-            while (gamepad2.b){
+                else if (!gamepad2.a){
+                    intakeMotor.setPower(0);
+            }
+            if (gamepad2.b){
                 intakeMotor.setPower(-0.5);
             }
-            while (gamepad2.y){
-
-
+                else if (!gamepad2.b){
+                    intakeMotor.setPower(0);
             }
-            while (gamepad2.x){
+            if (gamepad2.y){
+                outtakeMotor.setPower(0.5);
+            }
+                else if (!gamepad2.y){
+                    outtakeMotor.setPower(0);
+            }
+            if (gamepad2.x){
                 outtakeMotor.setPower(-0.25);
             }
-            while (gamepad2.left_bumper){
+                else if (!gamepad2.x){
+                    outtakeMotor.setPower(0);
+            }
+            if (gamepad2.left_bumper){
                 capperMotor.setPower(0.25);
             }
-            while (gamepad2.right_bumper){
+                else if (!gamepad2.left_bumper){
+                    capperMotor.setPower(0);
+            }
+            if (gamepad2.right_bumper){
                 capperMotor.setPower(-0.25);
             }
-            while (gamepad1.a){
+                else if (!gamepad2.right_bumper){
+                    capperMotor.setPower(0);
+            }
+            if (gamepad1.a){
                 carouselMotor.setPower(0.5);
             }
-            while (gamepad1.b){
+                else if (!gamepad1.a){
+                    carouselMotor.setPower(0);
+            }
+            if (gamepad1.b) {
                 carouselMotor.setPower(-0.5);
             }
+                else if (!gamepad1.b){
+                    carouselMotor.setPower(0);
+                }
             if (gamepad2.dpad_up){
                 outtakeServo.setPosition(95);
             }
@@ -135,10 +164,16 @@ public class Teleop extends LinearOpMode {
             if (gamepad2.dpad_right) {
                 capperServo.setPosition(0);
             }
+            if (gamepad2.left_bumper){
+                servoPosition = servoPosition + 45;
+            }
+                else if (gamepad2.right_bumper){
+                    servoPosition = servoPosition - 45;
+            }
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("zValue", String.valueOf(zValue));
+            telemetry.addData("BoxAngle", currentHeading);
             //telemetry.addData("4. X", String.format("%03d", zValue));
             //telemetry.addData("Gyro Reading", String.valueOf(xValue));//, "x", String.valueOf(yValue), "y", String.valueOf(zValue), "z");
             //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
