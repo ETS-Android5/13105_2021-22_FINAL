@@ -23,7 +23,7 @@ public class Standard_Bot {
     //public Rev2mDistanceSensor  StdRevDistanceSensor = null;
 
     public final double Capper_Start= 0;
-    public final double Outtake_Servo= 0;
+    public final double Outtake_Start= 0;
 
     HardwareMap hwMap =  null;
     private ElapsedTime period = new ElapsedTime();
@@ -71,7 +71,7 @@ public class Standard_Bot {
         StdOuttakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         StdCapperServo.setPosition(Capper_Start);
-        StdOuttakeServo.setPosition(Outtake_Servo);
+        StdOuttakeServo.setPosition(Outtake_Start);
 
         // Set all motors to zero power
         StdFrontLeft.setPower(0);
@@ -91,7 +91,7 @@ public class Standard_Bot {
         StdFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         StdBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         StdIntakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        StdCapperMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        StdCapperMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         StdOuttakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         StdCarouselMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
