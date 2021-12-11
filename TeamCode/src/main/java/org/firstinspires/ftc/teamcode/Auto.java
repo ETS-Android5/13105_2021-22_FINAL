@@ -13,7 +13,6 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Standard_Bot;
 public class Auto extends LinearOpMode {
 
     Standard_Bot robot = new Standard_Bot();
-//    TankDrive td = new TankDrive();
 
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -31,9 +30,6 @@ public class Auto extends LinearOpMode {
 
     HardwareMap hwMap =  null;
 
-    int encoder = 0;
-    boolean dummy = false;
-
     @Override
     public void runOpMode() {
 
@@ -50,20 +46,14 @@ public class Auto extends LinearOpMode {
         outtakeMotor = robot.StdOuttakeMotor;
         carouselMotor = robot.StdCarouselMotor;
         capperMotor = robot.StdCapperMotor;
-
+        outtakeMotor = robot.StdOuttakeMotor;
         capperServo = robot.StdCapperServo;
-        outtakeServo = robot.StdOuttakeServo;
-
-        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         waitForStart();
 
         while (opModeIsActive()) {
 
-            drive(0.1, 0.5);
+            drive(1, 1, 0.5);
             sleep(250);
 
             break;
@@ -71,7 +61,7 @@ public class Auto extends LinearOpMode {
         }
     }
 
-    public void drive(double inches, double power) {
+    public void drive(double rightInches, double leftInches, double power) {
         int rightTarget;
         int leftTarget;
 
@@ -80,8 +70,8 @@ public class Auto extends LinearOpMode {
         frontRight.setPower(power);
         backRight.setPower(power);
 
-        leftTarget = (int) (inches + frontLeft.getCurrentPosition());
-        rightTarget = (int) (inches + frontRight.getCurrentPosition());
+        leftTarget = (int) (leftInches + frontLeft.getCurrentPosition());
+        rightTarget = (int) (rightInches + frontRight.getCurrentPosition());
 
         frontLeft.setTargetPosition(leftTarget);
         backLeft.setTargetPosition(leftTarget);
@@ -100,64 +90,5 @@ public class Auto extends LinearOpMode {
         backRight.setPower(0);
 
     }
-/*
-        public void encoderDrive( double power, double leftInches, double rightInches, int timeout){
-
-        int newLeftTarget;
-        int newRightTarget;
-        double directionCorrection = 0;
-
-            // Determine new target position, and pass to motor controller
-            newLeftTarget = frontLeft.getCurrentPosition() + (int)(leftInches * 33);
-            newRightTarget = frontRight.getCurrentPosition() + (int)(rightInches * 33);
-
-            frontLeft.setTargetPosition(newLeftTarget);
-            frontRight.setTargetPosition(newRightTarget);
-            backLeft.setTargetPosition(newLeftTarget);
-            backRight.setTargetPosition(newRightTarget);
-
-            runtime.reset();                           // reset the timeout time and start motion.
-            frontLeft.setPower(0.05);
-            backLeft.setPower(0.05);
-            frontRight.setPower(0.05);
-            backRight.setPower(0.05);
-
-            // Turn On RUN_TO_POSITION
-            frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            frontLeft.setPower(power);
-            backLeft.setPower(power);
-            frontRight.setPower(power);
-            backRight.setPower(power);
-
-            while (opModeIsActive() &&
-                  (runtime.seconds() < timeout) &&
-                  (frontLeft.isBusy() && frontRight.isBusy()))
-            {
-                // Use the gyro if you are driving straight
-                if (Math.abs(leftInches - rightInches) < 0.1) {
-                   frontLeft.setPower (1*(power));
-                   backLeft.setPower (1*(power));
-                   frontRight.setPower (1*(power));
-                   backRight.setPower (1*(power));
-                }
-
-                // Display it for the driver.
-                telemetry.addData("leftFront", frontLeft.getPower());
-                telemetry.addData("rightFront", frontRight.getPower());
-                telemetry.addData("leftRear", backLeft.getPower());
-                telemetry.addData("rightRear", backRight.getPower());
-                telemetry.update();
-            }
-            frontLeft.setPower(0);
-            frontRight.setPower(0);
-            backLeft.setPower(0);
-            backRight.setPower(0);
-
-    }
-*/
 }
 

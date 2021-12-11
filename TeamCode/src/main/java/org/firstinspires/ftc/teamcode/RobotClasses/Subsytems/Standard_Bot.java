@@ -65,9 +65,9 @@ public class Standard_Bot {
         StdBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         StdBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         StdFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        StdIntakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        StdIntakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         StdCapperMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        StdCarouselMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        StdCarouselMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         StdOuttakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         StdCapperServo.setPosition(Capper_Start);
@@ -91,7 +91,7 @@ public class Standard_Bot {
         StdFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         StdBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         StdIntakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        StdCapperMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        StdCapperMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         StdOuttakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         StdCarouselMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
