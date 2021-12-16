@@ -9,6 +9,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Standard_Bot;
 import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.TankDrive;
 
@@ -64,7 +67,7 @@ public class Teleop extends LinearOpMode {
         //boxGyro.calibrate();
 
         double currentHeading = 0;
-        double servoPosition = 0;
+        double servoPosition = 100;
         double encoderCount = 0;
 
         waitForStart();
@@ -75,7 +78,7 @@ public class Teleop extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            outtakeMotor.setTargetPosition(150);
+            //outtakeServo.setPosition(90);
 
             currentHeading = boxGyro.getHeading();
 
@@ -93,39 +96,42 @@ public class Teleop extends LinearOpMode {
             backLeft.setPower(drivePower + rotatePower);
             backRight.setPower(drivePower - rotatePower);
 
-            if (gamepad2.a) {
-                intakeMotor.setPower(0.75);
+            encoderCount = outtakeMotor.getCurrentPosition();
+
+            if (gamepad1.a) {
+                intakeMotor.setPower(1);
             }
-                else if (gamepad2.b){
-                    intakeMotor.setPower(-0.75);
+                else if (gamepad1.b){
+                    intakeMotor.setPower(-1);
             }
                     else {
                         intakeMotor.setPower(0);
             }
 
             if (gamepad2.y) {
-                outtakeMotor.setPower(0.5);
+                outtakeMotor.setPower(0.25);
             }
                 else if (gamepad2.x){
-                    outtakeMotor.setPower(-0.5);
+                    outtakeMotor.setPower(-0.25);
             }
                     else {
                         outtakeMotor.setPower(0);
             }
 
             if (gamepad2.left_bumper) {
-                capperMotor.setPower(0.1);
+                capperMotor.setPower(0.4);
             }
                 else if (gamepad2.right_bumper) {
-                    capperMotor.setPower(-0.1);
+                    capperMotor.setPower(-0.4);
             }
                     else {
                         capperMotor.setPower(0);
             }
-            if (gamepad1.a){
+
+            if (gamepad2.a){
                 carouselMotor.setPower(0.75);
             }
-                else if (gamepad1.b){
+                else if (gamepad2.b){
                     carouselMotor.setPower(-0.75);
             }
                     else{
@@ -133,27 +139,36 @@ public class Teleop extends LinearOpMode {
             }
 
             if (gamepad2.dpad_up) {
-                outtakeServo.setPosition(95);
+                outtakeServo.setPosition(1);
             }
 
             if (gamepad2.dpad_down) {
-                outtakeServo.setPosition(0);
+                outtakeServo.setPosition(0.6);
             }
 
             if (gamepad2.dpad_left) {
-                capperServo.setPosition(180);
-            }
-
-            if (gamepad2.dpad_right) {
                 capperServo.setPosition(0);
             }
 
-            if (gamepad2.left_bumper) {
-                servoPosition = servoPosition + 45;
+            if (gamepad2.dpad_right) {
+                capperServo.setPosition(0.5);
             }
 
-            else if (gamepad2.right_bumper) {
-                servoPosition = servoPosition - 45;
+            if (gamepad1.left_bumper) {
+                //servoPosition = servoPosition + 10;
+                //sleep(500);
+                //outtakeServo.setPosition(servoPosition);
+            }
+            if (gamepad1.dpad_right){
+                //servoPosition = servoPosition - 10;
+                //sleep(500);
+                //outtakeServo.setPosition(servoPosition);
+                //sleep(250);
+                //outtakeMotor.setTargetPosition(130);
+                //outtakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                //sleep(250);
+                //outtakeServo.setPosition(80);
+                //sleep(250);
             }
 
             // Show the elapsed game time and wheel power.
@@ -165,6 +180,8 @@ public class Teleop extends LinearOpMode {
             //intakeMotor.setPower(0);
             //carouselMotor.setPower(0);
             //capperMotor.setPower(0);
+            telemetry.addData("servoPosition", String.valueOf(servoPosition));
+
             idle();
         }
     }

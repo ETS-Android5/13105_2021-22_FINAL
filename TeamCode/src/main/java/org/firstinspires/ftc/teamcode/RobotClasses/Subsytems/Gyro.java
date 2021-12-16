@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  * A wrapper class for the BNO055IMU
  */
 public class Gyro {
+
     private BNO055IMU imu;
     private BNO055IMU.Parameters parameters;
 
@@ -28,6 +29,7 @@ public class Gyro {
 
         angle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
     }
+
 
     public double getAngle() {
         imu.getPosition();

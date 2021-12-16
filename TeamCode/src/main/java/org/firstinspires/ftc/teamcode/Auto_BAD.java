@@ -16,8 +16,8 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.TankDrive;
 
 import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Standard_Bot;
 
-@Autonomous(name="Auto", group="Auto")
-public class Auto extends LinearOpMode {
+@Autonomous(name="Auto_BAD", group="Auto")
+public class Auto_BAD extends LinearOpMode {
 
     Standard_Bot robot = new Standard_Bot();
     ;
@@ -78,27 +78,45 @@ public class Auto extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            drive(-10, -10, -0.5);
-            //carouselMotor.setPower(0.5);
-            //sleep(10000);
-            //drive(1, 1, 0.5);
-            currentAngle = getAngle();
-            telemetry.update();
+            drive(1,1,-0.5,500);
             break;
         }
     }
-        public void drive(double right, double left, double power) {
 
+    public void turnLeft(double power, long time) {
+        frontLeft.setPower(-power);
+        backLeft.setPower(-power);
+        frontRight.setPower(power);
+        backRight.setPower(power);
+
+        sleep(time);
+    }
+
+    public void turnRight(double power, long time) {
+        frontLeft.setPower(power);
+        backLeft.setPower(power);
+        frontRight.setPower(-power);
+        backRight.setPower(-power);
+
+        sleep(time);
+    }
+
+    public void drive(double right, double left, double power, long time) {
         int rightTarget;
         int leftTarget;
 
+        frontLeft.setPower(power);
+        backLeft.setPower(power);
+        frontRight.setPower(power);
+        backRight.setPower(power);
+
+        sleep(time);
 
         leftTarget = (int) (left + frontLeft.getCurrentPosition());
         rightTarget = (int) (right + frontRight.getCurrentPosition());
 
-        leftTarget = leftTarget+1000;
-        rightTarget = rightTarget+1000;
+        leftTarget = leftTarget*(10);
+        rightTarget = rightTarget*(10);
 
         frontLeft.setTargetPosition(leftTarget);
         backLeft.setTargetPosition(leftTarget);
@@ -110,13 +128,6 @@ public class Auto extends LinearOpMode {
         backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        frontLeft.setPower(power);
-        backLeft.setPower(power);
-        frontRight.setPower(power);
-        backRight.setPower(power);
-
-        while (opModeIsActive() && frontLeft.isBusy() && frontRight.isBusy()) {idle();}
 
         frontLeft.setPower(0);
         frontRight.setPower(0);
