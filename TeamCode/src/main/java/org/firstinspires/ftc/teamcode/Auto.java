@@ -13,6 +13,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Gyro;
 import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.TankDrive;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+
 
 import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Standard_Bot;
 
@@ -20,7 +24,6 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Standard_Bot;
 public class Auto extends LinearOpMode {
 
     Standard_Bot robot = new Standard_Bot();
-    ;
 
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor frontLeft = null;
@@ -34,6 +37,8 @@ public class Auto extends LinearOpMode {
 
     private Servo outtakeServo = null;
     private Servo capperServo = null;
+
+    DistanceSensor sensorRange;
 
     BNO055IMU imu;
     Orientation lastAngles = new Orientation();
@@ -61,6 +66,8 @@ public class Auto extends LinearOpMode {
         outtakeServo = robot.StdOuttakeServo;
         capperServo = robot.StdCapperServo;
 
+        sensorRange = robot.StdDistanceSensor;
+
         outtakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -73,20 +80,60 @@ public class Auto extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        double currentAngle;
+        double currentAngle = 0;
+        double currentDistance = 0;
+        double minAngle = 0;
+        double minDistance = 100;
+        double globalAngle = 0;
+        double allianceHubLevel = 0;
 
         waitForStart();
 
         while (opModeIsActive()) {
-            lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            drive(-10, -10, -0.5);
-            //carouselMotor.setPower(0.5);
-            //sleep(10000);
-            //drive(1, 1, 0.5);
-            currentAngle = getAngle();
+
+            double angleToTeamElement = 0;
+            drive(3, 3, 0.5);             // Move away from the wall
+            sleep(1000);
+            rotate(25);                             // Get ready to scan
+            sleep(1000);
+            angleToTeamElement = rotate(-50, 0);    // Scan for the team element
+            sleep(2000);
+            if (angleToTeamElement < -35.0) {allianceHubLevel = 1;}
+            else if (angleToTeamElement < -17.0) {allianceHubLevel = 2;}
+            else {allianceHubLevel = 3;}
+
+            // Take different actions based upon the hub level
+            if (allianceHubLevel == 3) {
+                intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                intakeMotor.setPower(-0.6);
+                sleep(3000);
+                intakeMotor.setPower(0.0);
+                intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
+            else if (allianceHubLevel == 2){
+                rotate(55);
+                sleep(1000);
+                outtakeArmDrive(0.3, -38, 2);
+                sleep (1500);
+                drive(13, 13, 0.5);
+                sleep(2000);
+                intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                intakeMotor.setPower(-0.6);
+                sleep (3000);
+                intakeMotor.setPower (0.0);
+                intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
+            else if (allianceHubLevel == 1){
+
+            }
+            else {}     // This is an error
+            outtakeArmDrive(0.3, 6, 1);
+            sleep (1500);
+
             telemetry.update();
             break;
         }
+
     }
         public void drive(double right, double left, double power) {
 
@@ -179,6 +226,98 @@ public class Auto extends LinearOpMode {
         frontLeft.setPower(0);
         backLeft.setPower(0);
 
+    }
+    private void rotate(int degrees)
+    {
+        double temp = rotate (degrees, 0);
+        return;
+    }
+
+    private double rotate(int degrees, int dummy) {
+        double leftPower, rightPower;
+        double currentAngle = 0, currentDistance = 0, minAngle = 0, minDistance = 100;
+
+        // restart imu movement tracking.
+
+        // getAngle() returns + when rotating counter clockwise (left) and - when rotating
+        // clockwise (right).
+
+        if (degrees < 0) {   // turn right.
+            leftPower = 0.5;
+            rightPower = -0.5;
+        } else if (degrees > 0) {
+            // turn left.
+            leftPower = -0.5;
+            rightPower = 0.5;
+        } else return 0;
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        // set power to rotate.
+        frontLeft.setPower(leftPower);
+        backLeft.setPower(leftPower);
+        frontRight.setPower(rightPower);
+        backRight.setPower(rightPower);
+
+        // rotate until turn is completed.
+        if (degrees < 0) {
+            // On right turn we have to get off zero first.
+            while (opModeIsActive() && getAngle() == 0) {
+            }
+
+            while (opModeIsActive() && (currentAngle = getAngle()) > degrees) {
+                currentDistance = sensorRange.getDistance(DistanceUnit.INCH);
+                if (currentDistance < minDistance) {
+                    minDistance = currentDistance;
+                    minAngle = currentAngle;
+                }
+
+            }
+        } else {    // left turn.
+            while (opModeIsActive() && getAngle() == 0) {
+            }
+            while (opModeIsActive() && (currentAngle = getAngle()) < degrees) {
+            }
+        }
+        // turn the motors off.
+        frontRight.setPower(0);
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+        // wait for rotation to stop.
+        sleep(100);
+
+        telemetry.addData("Min Dist: " + minDistance, "; Min Angle: " + minAngle);
+        telemetry.update();
+        // reset angle tracking on new heading.
+        return minAngle;
+    }
+    public void outtakeArmDrive( double power, double armInches, int timeout) {
+        int newTarget;
+
+        if (opModeIsActive()) {
+
+            newTarget = outtakeMotor.getCurrentPosition() + (int)(armInches);
+            outtakeMotor.setTargetPosition(newTarget);
+            outtakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            runtime.reset();
+            outtakeMotor.setPower(power);
+
+              while (opModeIsActive() && (runtime.seconds() < timeout) && outtakeMotor.isBusy()) {
+                telemetry.addData("PathIA",  "Running to %7d :%7d", newTarget,  outtakeMotor.getCurrentPosition());
+                telemetry.update();
+                idle ();
+            }
+        }
     }
 }
 

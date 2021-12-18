@@ -5,6 +5,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+
+
 
 public class Standard_Bot {
 
@@ -19,8 +23,8 @@ public class Standard_Bot {
     public Servo StdCapperServo = null;
     public Servo StdOuttakeServo = null;
     public GyroSensor StdBoxGyro = null;
-    //public DistanceSensor       StdDistanceSensor = null;
-    //public Rev2mDistanceSensor  StdRevDistanceSensor = null;
+    public DistanceSensor       StdDistanceSensor = null;
+    public Rev2mDistanceSensor  StdRevDistanceSensor = null;
 
     public final double Capper_Start= 0;
     public final double Outtake_Start= 90;
@@ -49,8 +53,8 @@ public class Standard_Bot {
 
         StdBoxGyro = hwMap.get(GyroSensor.class, "boxGyro");
 
-        //StdDistanceSensor = hwMap.get(DistanceSensor.class, "distanceSensor");
-        //StdRevDistanceSensor = (Rev2mDistanceSensor)StdDistanceSensor;
+        StdDistanceSensor = hwMap.get(DistanceSensor.class, "distanceSensor");
+        StdRevDistanceSensor = (Rev2mDistanceSensor)StdDistanceSensor;
 
         StdFrontLeft.setDirection(DcMotor.Direction.FORWARD);
         StdFrontRight.setDirection(DcMotor.Direction.REVERSE);
