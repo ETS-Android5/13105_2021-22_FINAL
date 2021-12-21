@@ -8,8 +8,6 @@ import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 
-
-
 public class Standard_Bot {
 
     public DcMotor StdFrontRight   = null;
@@ -40,7 +38,7 @@ public class Standard_Bot {
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        StdFrontLeft  = hwMap.get(DcMotor.class, "frontLeft");
+        StdFrontLeft = hwMap.get(DcMotor.class, "frontLeft");
         StdFrontRight = hwMap.get(DcMotor.class, "frontRight");
         StdBackLeft = hwMap.get(DcMotor.class, "backLeft");
         StdBackRight = hwMap.get(DcMotor.class, "backRight");

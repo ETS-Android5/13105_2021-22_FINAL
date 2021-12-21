@@ -1,27 +1,23 @@
 package org.firstinspires.ftc.teamcode;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Gyro;
-import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.TankDrive;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
-
-
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Standard_Bot;
 
-@Autonomous(name="Auto", group="Auto")
-public class Auto extends LinearOpMode {
+@Autonomous(name="Auto_Blue_Left", group="Auto_Blue_Left")
+public class Auto_Blue_Left extends LinearOpMode {
 
     Standard_Bot robot = new Standard_Bot();
 
@@ -86,13 +82,13 @@ public class Auto extends LinearOpMode {
         double minDistance = 100;
         double globalAngle = 0;
         double allianceHubLevel = 0;
+        double angleToTeamElement = 0;
 
         waitForStart();
 
         while (opModeIsActive()) {
 
-            double angleToTeamElement = 0;
-            drive(3, 3, 0.5);             // Move away from the wall
+            drive(3, 3, -0.5);             // Move away from the wall
             sleep(1000);
             rotate(25);                             // Get ready to scan
             sleep(1000);
@@ -135,7 +131,7 @@ public class Auto extends LinearOpMode {
         }
 
     }
-        public void drive(double right, double left, double power) {
+    public void drive(double right, double left, double power) {
 
         int rightTarget;
         int leftTarget;
@@ -163,7 +159,9 @@ public class Auto extends LinearOpMode {
         frontRight.setPower(power);
         backRight.setPower(power);
 
-        while (opModeIsActive() && frontLeft.isBusy() && frontRight.isBusy()) {idle();}
+        while (opModeIsActive() && frontLeft.isBusy() && frontRight.isBusy()) {
+            idle();
+        }
 
         frontLeft.setPower(0);
         frontRight.setPower(0);
@@ -312,7 +310,7 @@ public class Auto extends LinearOpMode {
             runtime.reset();
             outtakeMotor.setPower(power);
 
-              while (opModeIsActive() && (runtime.seconds() < timeout) && outtakeMotor.isBusy()) {
+            while (opModeIsActive() && (runtime.seconds() < timeout) && outtakeMotor.isBusy()) {
                 telemetry.addData("PathIA",  "Running to %7d :%7d", newTarget,  outtakeMotor.getCurrentPosition());
                 telemetry.update();
                 idle ();

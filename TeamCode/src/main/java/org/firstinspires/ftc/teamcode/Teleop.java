@@ -90,6 +90,9 @@ public class Teleop extends LinearOpMode {
             telemetry.addData("drivePower", String.valueOf(drivePower));
             telemetry.addData("rotatePower", String.valueOf(rotatePower));
 
+            //drivePower = (float) (drivePower*(0.1));
+            //rotatePower = (float) (rotatePower*(0.1));
+
             // Flip these signs if the robot rotates the wrong way
             frontLeft.setPower(drivePower + rotatePower);
             frontRight.setPower(drivePower - rotatePower);
@@ -98,6 +101,30 @@ public class Teleop extends LinearOpMode {
 
             encoderCount = outtakeMotor.getCurrentPosition();
 
+            while (gamepad1.dpad_up){
+                frontLeft.setPower(0.25);
+                frontRight.setPower(0.25);
+                backLeft.setPower(0.25);
+                backRight.setPower(0.25);
+            }
+            while (gamepad1.dpad_down){
+                frontLeft.setPower(-0.25);
+                frontRight.setPower(-0.25);
+                backLeft.setPower(-0.25);
+                backRight.setPower(-0.25);
+            }
+            while (gamepad1.dpad_right){
+                frontLeft.setPower(0.25);
+                frontRight.setPower(0.25);
+                backLeft.setPower(-0.25);
+                backRight.setPower(-0.25);
+            }
+            while (gamepad1.dpad_left){
+                frontLeft.setPower(-0.25);
+                frontRight.setPower(-0.25);
+                backLeft.setPower(0.25);
+                backRight.setPower(0.25);
+            }
             if (gamepad1.a) {
                 intakeMotor.setPower(1);
             }
