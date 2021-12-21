@@ -136,12 +136,13 @@ public class Auto_Blue_Left extends LinearOpMode {
         int rightTarget;
         int leftTarget;
 
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        leftTarget = (int) (left + frontLeft.getCurrentPosition());
-        rightTarget = (int) (right + frontRight.getCurrentPosition());
-
-        leftTarget = leftTarget+1000;
-        rightTarget = rightTarget+1000;
+        leftTarget = (int) (left*(33) + frontLeft.getCurrentPosition());
+        rightTarget = (int) (right*(33) + frontRight.getCurrentPosition());
 
         frontLeft.setTargetPosition(leftTarget);
         backLeft.setTargetPosition(leftTarget);
@@ -163,15 +164,15 @@ public class Auto_Blue_Left extends LinearOpMode {
             idle();
         }
 
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         frontLeft.setPower(0);
         frontRight.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);
-
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
 
