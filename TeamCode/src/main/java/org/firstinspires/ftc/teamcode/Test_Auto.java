@@ -88,7 +88,7 @@ public class Test_Auto extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            drive(-3, -3, 0.5);
+            threeDump();
             telemetry.update();
             break;
         }
@@ -280,6 +280,26 @@ public class Test_Auto extends LinearOpMode {
                 idle ();
             }
         }
+    }
+    public void threeDump(){
+        outtakeServo.setPosition(0.6);
+        sleep(100);
+        outtakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        outtakeMotor.setPower(-0.5);
+        sleep(500);
+        outtakeServo.setPosition(1);
+        sleep(250);
+        outtakeMotor.setPower(-0.5);
+        sleep(400);
+        outtakeMotor.setPower(0.5);//down
+        sleep(500);
+        outtakeServo.setPosition(0.6);
+        sleep(100);
+        outtakeMotor.setPower(0.5);
+        sleep(400);
+        outtakeMotor.setPower(0);
+        outtakeServo.setPosition(1);
+        outtakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }
 
