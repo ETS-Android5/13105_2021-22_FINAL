@@ -26,8 +26,8 @@ public class Standard_Bot {
     public DistanceSensor StdBackStop = null;
     public Rev2mDistanceSensor StdRevBackStop = null;
 
-    public final double Capper_Start= 0;
-    public final double Outtake_Start= 1;
+    public final double Capper_Start = 0;
+    public final double Outtake_Start = 0;
 
     HardwareMap hwMap =  null;
     private ElapsedTime period = new ElapsedTime();

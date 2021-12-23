@@ -310,50 +310,49 @@ public class Auto_Blue_Left extends LinearOpMode {
     }
 
     public void threeDump() {
-        outtakeServo.setPosition(0.6);
-        sleep(100);
         outtakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        outtakeMotor.setPower(-0.5);
-        sleep(500);
-        outtakeServo.setPosition(1);
+        outtakeServo.setPosition(0.15);
         sleep(250);
         outtakeMotor.setPower(-0.5);
-        sleep(400);
-        outtakeMotor.setPower(0.5);//down
         sleep(500);
-        outtakeServo.setPosition(0.6);
-        sleep(100);
-        outtakeMotor.setPower(0.5);
-        sleep(400);
-        outtakeMotor.setPower(0);
-        outtakeServo.setPosition(1);
-        outtakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
-    public void twoDump() {
-        outtakeServo.setPosition(0.6);
-        sleep(100);
-        outtakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        outtakeMotor.setPower(-0.5);
-        sleep(500);
-        outtakeServo.setPosition(1);
+        outtakeServo.setPosition(0);
         sleep(250);
         outtakeMotor.setPower(-0.5);
-        sleep(1000);
+        sleep(600);
         outtakeMotor.setPower(0.5);//down
         sleep(500);
-        outtakeServo.setPosition(0.6);
+        outtakeServo.setPosition(0.15);
         sleep(100);
         outtakeMotor.setPower(0.5);
         sleep(600);
         outtakeMotor.setPower(0);
-        outtakeServo.setPosition(1);
-        outtakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        outtakeServo.setPosition(0);
+    }
+
+    public void twoDump() {
+        outtakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        outtakeServo.setPosition(0.15);
+        sleep(250);
+        outtakeMotor.setPower(0.5);
+        sleep(500);
+        outtakeMotor.setPower(0);
+        outtakeServo.setPosition(0.5);
+        sleep(500);
+        outtakeServo.setPosition(0.15);//down
+        sleep(250);
+        outtakeMotor.setPower(-0.5);
+        sleep(500);
+        outtakeMotor.setPower(0);
+        outtakeServo.setPosition(0);
+        sleep(250);
     }
 
     public void oneDump() {
-        outtakeServo.setPosition(0.1);
-        sleep(1000);
-        outtakeServo.setPosition(1);
+        outtakeServo.setPosition(0.55);
+        sleep(500);
+        outtakeServo.setPosition(0);
+        sleep(250);
+        outtakeServo.setPosition(0);
+        sleep(250);
     }
 }
