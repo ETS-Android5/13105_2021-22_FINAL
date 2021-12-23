@@ -15,12 +15,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
 import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Standard_Bot;
+import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.TankDrive;
+import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Gyro;
 
 @Autonomous(name="Auto_Blue_Left", group="Auto_Blue_Left")
 public class Auto_Blue_Left extends LinearOpMode {
 
     Standard_Bot robot = new Standard_Bot();
+    TankDrive drivetrain = new TankDrive();
+    Gyro gyro = new Gyro();
 
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotorImplEx frontLeft = null;
@@ -36,6 +41,7 @@ public class Auto_Blue_Left extends LinearOpMode {
     private Servo capperServo = null;
 
     DistanceSensor sensorRange;
+    DistanceSensor backStop;
 
     BNO055IMU imu;
     Orientation lastAngles = new Orientation();
@@ -64,6 +70,7 @@ public class Auto_Blue_Left extends LinearOpMode {
         capperServo = robot.StdCapperServo;
 
         sensorRange = robot.StdDistanceSensor;
+        backStop = robot.StdBackStop;
 
         outtakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -77,11 +84,6 @@ public class Auto_Blue_Left extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        double currentAngle = 0;
-        double currentDistance = 0;
-        double minAngle = 0;
-        double minDistance = 100;
-        double globalAngle = 0;
         double allianceHubLevel = 0;
         double angleToTeamElement = 0;
 
@@ -99,47 +101,51 @@ public class Auto_Blue_Left extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            drive(-3, -3, 360);             // Move away from the wall
+            drive(-3, -3, 360); // Move away from the wall
             sleep(250);
-            rotate(50);                             // Get ready to scan
+            rotate(50); // Get ready to scan
             sleep(250);
-            angleToTeamElement = rotate(-25, 0);    // Scan for the team element
+            angleToTeamElement = rotate(-20, 0); // Scan for the team element
             sleep(250);
             if (angleToTeamElement > 35.0) {allianceHubLevel = 1;}
-            else if (angleToTeamElement > 14.0 && angleToTeamElement <35) {allianceHubLevel = 2; }
+            else if (angleToTeamElement > 14 && angleToTeamElement <35) {allianceHubLevel = 2; }
             else {allianceHubLevel = 3;}
             telemetry.addData("allianceHubLevel", String.valueOf(allianceHubLevel));
+            telemetry.update();
 
             if (allianceHubLevel == 3) {
-                drive(-25, -25, 360);
+                drive(-25, -25,360);
                 sleep(250);
                 threeDump();
-                drive(3, 3, 360);
+                drive(5, 5, 360);
                 sleep(250);
-                rotate(-95);
+                rotate(-75);
                 sleep(250);
                 drive(50, 50, 720);
-            } else if (allianceHubLevel == 2) {
+            }
+            else if (allianceHubLevel == 2) {
                 drive(-20, -20, 360);
                 sleep(250);
                 twoDump();
-                drive(3, 3, 360);
+                drive(5, 5, 360);
                 sleep(250);
-                rotate(-95);
+                rotate(-75);
                 sleep(250);
                 drive(50, 50, 720);
-            } else if (allianceHubLevel == 1) {
+            }
+            else if (allianceHubLevel == 1) {
                 drive(-15, -15, 360);
                 sleep(250);
                 oneDump();
-                drive(3, 3, 360);
+                drive(5, 5, 360);
                 sleep(250);
-                rotate(-95);
+                rotate(-75);
                 sleep(250);
                 drive(50, 50, 720);
-            } else {
-            }     // This is an error
-            //outtakeArmDrive(0.3, 6, 1);
+            }
+            else {
+            }
+
             sleep(1500);
 
             telemetry.update();
@@ -147,7 +153,6 @@ public class Auto_Blue_Left extends LinearOpMode {
         }
 
     }
-
     public void drive(double right, double left, double anglrt) {
 
         int rightTarget;
@@ -166,6 +171,11 @@ public class Auto_Blue_Left extends LinearOpMode {
         frontRight.setTargetPosition(rightTarget);
         backRight.setTargetPosition(rightTarget);
 
+        frontLeft.setVelocity(90, AngleUnit.DEGREES);
+        backLeft.setVelocity(90, AngleUnit.DEGREES);
+        frontRight.setVelocity(90, AngleUnit.DEGREES);
+        backRight.setVelocity(90, AngleUnit.DEGREES);
+
         frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -176,14 +186,21 @@ public class Auto_Blue_Left extends LinearOpMode {
         frontRight.setVelocity(anglrt, AngleUnit.DEGREES);
         backRight.setVelocity(anglrt, AngleUnit.DEGREES);
 
-        while (opModeIsActive() && frontLeft.isBusy() && frontRight.isBusy()) {
+        while (opModeIsActive() && frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy()) {
+            if (backStop.getDistance(DistanceUnit.INCH) < 6 ){
+                frontLeft.setVelocity(0);
+                frontRight.setVelocity(0);
+                backLeft.setVelocity(0);
+                backRight.setVelocity(0);
+                break;
+            }
             idle();
         }
 
-        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    /*  frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); */
 
         frontLeft.setVelocity(0, AngleUnit.DEGREES);
         frontRight.setVelocity(0, AngleUnit.DEGREES);
@@ -322,7 +339,7 @@ public class Auto_Blue_Left extends LinearOpMode {
         outtakeServo.setPosition(1);
         sleep(250);
         outtakeMotor.setPower(-0.5);
-        sleep(600);
+        sleep(1000);
         outtakeMotor.setPower(0.5);//down
         sleep(500);
         outtakeServo.setPosition(0.6);

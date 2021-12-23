@@ -1,98 +1,136 @@
 package org.firstinspires.ftc.teamcode.RobotClasses.Subsytems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorImplEx;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class TankDrive {
-    private static DcMotor frontRight;
-    private static DcMotor frontLeft;
-    private static DcMotor backRight;
-    private static DcMotor backLeft;
+    Standard_Bot robot = new Standard_Bot();
+    Gyro gyro = new Gyro();
 
-    public double x;
-    private Gyro gyro;
+    private static DcMotorImplEx frontRight;
+    private static DcMotorImplEx frontLeft;
+    private static DcMotorImplEx backRight;
+    private static DcMotorImplEx backLeft;
+    DistanceSensor sensorRange;
+    public void drive(double right, double left, double anglrt) {
 
-    public void tankDrive(DcMotor frontRight, DcMotor frontLeft, DcMotor backRight, DcMotor backLeft, Gyro gyro) {
-        this.frontRight = frontRight;
-        this.frontLeft = frontLeft;
-        this.backRight = backRight;
-        this.backLeft = backLeft;
-
-        this.gyro = gyro;
-
-    }
-
-
-
-    public static void drive(double straight, double power) {
         int rightTarget;
         int leftTarget;
 
-        frontLeft.setPower(power);
-        backLeft.setPower(power);
-        frontRight.setPower(power);
-        backRight.setPower(power);
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        leftTarget = frontLeft.getCurrentPosition() + (int) (straight * 33);
-        rightTarget = frontRight.getCurrentPosition() + (int) (straight * 33);
+        leftTarget = (int) (left * (33) + frontLeft.getCurrentPosition());
+        rightTarget = (int) (right * (33) + frontRight.getCurrentPosition());
 
         frontLeft.setTargetPosition(leftTarget);
         backLeft.setTargetPosition(leftTarget);
         frontRight.setTargetPosition(rightTarget);
         backRight.setTargetPosition(rightTarget);
 
-        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-    }
-
-    public static void turn(double turn, double power) {
-        double frontLeftPower = 0;
-        double backLeftPower = 0;
-        double frontRightPower = 0;
-        double backRightPower = 0;
-        int rightTarget;
-        int leftTarget;
-
-        turn = turn*0.124;
-
-        if (turn > 0){
-            frontLeftPower = power;
-            backLeftPower = power;
-            frontRightPower = -power;
-            backRightPower = -power;
-        }
-        else if (turn < 0){
-            frontLeftPower = -power;
-            backLeftPower = -power;
-            frontRightPower = power;
-            backRightPower = power;
-        }
-        else if (turn == 0){
-            frontLeftPower = power;
-            backLeftPower = power;
-            frontRightPower = power;
-            backRightPower = power;
-        }
-
-        frontLeft.setPower(frontLeftPower);
-        backLeft.setPower(backLeftPower);
-        frontRight.setPower(frontRightPower);
-        backRight.setPower(backRightPower);
-
-        leftTarget = frontLeft.getCurrentPosition() + (int) (turn * 33);
-        rightTarget = frontRight.getCurrentPosition() + (int) (turn * 33);
-
-        frontLeft.setTargetPosition(leftTarget);
-        backLeft.setTargetPosition(leftTarget);
-        frontRight.setTargetPosition(rightTarget);
-        backRight.setTargetPosition(rightTarget);
+        frontLeft.setVelocity(90, AngleUnit.DEGREES);
+        backLeft.setVelocity(90, AngleUnit.DEGREES);
+        frontRight.setVelocity(90, AngleUnit.DEGREES);
+        backRight.setVelocity(90, AngleUnit.DEGREES);
 
         frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        frontLeft.setVelocity(anglrt, AngleUnit.DEGREES);
+        backLeft.setVelocity(anglrt, AngleUnit.DEGREES);
+        frontRight.setVelocity(anglrt, AngleUnit.DEGREES);
+        backRight.setVelocity(anglrt, AngleUnit.DEGREES);
+
+        while (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy()) {
+            ;
+        }
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        frontLeft.setVelocity(0, AngleUnit.DEGREES);
+        frontRight.setVelocity(0, AngleUnit.DEGREES);
+        backLeft.setVelocity(0, AngleUnit.DEGREES);
+        backRight.setVelocity(0, AngleUnit.DEGREES);
+
     }
+    public void rotate(int degrees) {
+        double temp = rotate(degrees, 0);
+        return;
+    }
+
+    public double rotate(int degrees, int dummy) {
+        double leftPower, rightPower;
+        double currentAngle = 0, currentDistance = 0, minAngle = 0, minDistance = 100;
+
+        // restart imu movement tracking.
+
+        // getAngle() returns + when rotating counter clockwise (left) and - when rotating
+        // clockwise (right).
+
+        if (degrees < 0) {   // turn right.
+            leftPower = 270;
+            rightPower = -270;
+        } else if (degrees > 0) {
+            // turn left.
+            leftPower = -270;
+            rightPower = 270;
+        } else return 0;
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        // set power to rotate.
+        frontLeft.setVelocity(leftPower, AngleUnit.DEGREES);
+        backLeft.setVelocity(leftPower, AngleUnit.DEGREES);
+        frontRight.setVelocity(rightPower, AngleUnit.DEGREES);
+        backRight.setVelocity(rightPower, AngleUnit.DEGREES);
+
+        // rotate until turn is completed.
+        if (degrees < 0) {
+            // On right turn we have to get off zero first.
+            while (gyro.getAngle() == 0) {
+            }
+
+            while ((currentAngle = gyro.getAngle()) > degrees) {
+                currentDistance = sensorRange.getDistance(DistanceUnit.INCH);
+                if (currentDistance < minDistance) {
+                    minDistance = currentDistance;
+                    minAngle = currentAngle;
+                }
+
+            }
+        } else {    // left turn.
+            while (gyro.getAngle() == 0) {
+            }
+            while ((currentAngle = gyro.getAngle()) < degrees) {
+            }
+        }
+        // turn the motors off.
+        frontRight.setPower(0);
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // reset angle tracking on new heading.
+        return minAngle;
+    }
+
 }
 //

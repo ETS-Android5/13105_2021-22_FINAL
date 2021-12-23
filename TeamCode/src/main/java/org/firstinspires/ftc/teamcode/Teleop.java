@@ -34,8 +34,6 @@ public class Teleop extends LinearOpMode {
     private Servo outtakeServo = null;
     private Servo capperServo = null;
 
-    private GyroSensor boxGyro = null;
-
     HardwareMap hwMap = null;
 
     @Override
@@ -56,16 +54,6 @@ public class Teleop extends LinearOpMode {
         capperServo = robot.StdCapperServo;
         outtakeServo = robot.StdOuttakeServo;
 
-        boxGyro = robot.StdBoxGyro;
-
-
-        //GyroSensor sensorGyro;
-        //ModernRoboticsI2cGyro mrGyro;
-
-        //sensorGyro = hardwareMap.gyroSensor.get("boxgyro");
-        //boxGyro = (ModernRoboticsI2cGyro) sensorGyro;
-        //boxGyro.calibrate();
-
         double currentHeading = 0;
         double servoPosition = 100;
         double encoderCount = 0;
@@ -73,14 +61,7 @@ public class Teleop extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        //while (boxGyro.isCalibrating()) {
-        //}
-
         while (opModeIsActive()) {
-
-            //outtakeServo.setPosition(90);
-
-            currentHeading = boxGyro.getHeading();
 
             // drivePower is the power for forward/backward movement
             // rotatePower is the power for rotating the robot
@@ -200,7 +181,6 @@ public class Teleop extends LinearOpMode {
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("BoxAngle", currentHeading);
             telemetry.update();
 
             //outtakeMotor.setPower(0);

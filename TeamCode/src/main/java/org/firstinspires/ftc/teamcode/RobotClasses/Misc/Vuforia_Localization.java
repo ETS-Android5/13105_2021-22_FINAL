@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RobotClasses.Subsytems;
+package org.firstinspires.ftc.teamcode.RobotClasses.Misc;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -22,7 +22,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 public class
 
 Vuforia_Localization {
-    // Variables to be used for later
+ /*   // Variables to be used for later
     private VuforiaLocalizer vuforiaLocalizer;
     private VuforiaLocalizer.Parameters parameters;
     private VuforiaTrackables visionTargets;
@@ -90,9 +90,9 @@ Vuforia_Localization {
         correctionX = ((targetX - robotX)*1.25);
         correctionX = (correctionX/25.4);
         if (correctionX > 0) {
-            TankDrive.turn(-90, speedX);
+            TankDrive.rotate(-90, speedX);
             TankDrive.drive(correctionX, speedX);
-            TankDrive.turn(90, speedX);
+            TankDrive.rotate(90, speedX);
         }
         else if(correctionX < 0) {
             TankDrive.turn(90, speedY);
@@ -150,4 +150,5 @@ Vuforia_Localization {
     }
 
     // Formats a matrix into a readable string
+*/
 }

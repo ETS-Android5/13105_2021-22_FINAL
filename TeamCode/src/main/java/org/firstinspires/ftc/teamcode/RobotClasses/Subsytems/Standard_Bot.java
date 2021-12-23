@@ -21,9 +21,10 @@ public class Standard_Bot {
     public DcMotor StdOuttakeMotor = null;
     public Servo StdCapperServo = null;
     public Servo StdOuttakeServo = null;
-    public GyroSensor StdBoxGyro = null;
-    public DistanceSensor       StdDistanceSensor = null;
-    public Rev2mDistanceSensor  StdRevDistanceSensor = null;
+    public DistanceSensor StdDistanceSensor = null;
+    public Rev2mDistanceSensor StdRevDistanceSensor = null;
+    public DistanceSensor StdBackStop = null;
+    public Rev2mDistanceSensor StdRevBackStop = null;
 
     public final double Capper_Start= 0;
     public final double Outtake_Start= 1;
@@ -50,10 +51,10 @@ public class Standard_Bot {
         StdCapperServo = hwMap.get(Servo.class, "capperServo");
         StdOuttakeServo = hwMap.get(Servo.class, "outtakeServo");
 
-        StdBoxGyro = hwMap.get(GyroSensor.class, "boxGyro");
-
         StdDistanceSensor = hwMap.get(DistanceSensor.class, "distanceSensor");
         StdRevDistanceSensor = (Rev2mDistanceSensor)StdDistanceSensor;
+        StdBackStop = hwMap.get(DistanceSensor.class, "backStop");
+        StdRevBackStop = (Rev2mDistanceSensor)StdBackStop;
 
         StdFrontLeft.setDirection(DcMotor.Direction.FORWARD);
         StdFrontRight.setDirection(DcMotor.Direction.REVERSE);

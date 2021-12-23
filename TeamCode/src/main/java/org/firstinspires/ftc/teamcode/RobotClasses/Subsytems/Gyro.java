@@ -15,33 +15,37 @@ public class Gyro {
     private BNO055IMU imu;
     private BNO055IMU.Parameters parameters;
 
+    Orientation lastAngles = new Orientation();
+
     private double resetAngle;
     private double minusAngle;
 
     Orientation angle;
 
+    public Gyro() {
+
+    }
     public Gyro(BNO055IMU imu) {
-        this.imu = imu;
+            this.imu = imu;
 
-        parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        imu.initialize(parameters);
+            parameters = new BNO055IMU.Parameters();
+            parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+            imu.initialize(parameters);
 
-        angle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            angle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        }
+
+
+        public double getAngle () {
+            imu.getPosition();
+            lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            return lastAngles.firstAngle;
+        }
+
+        public double resetGyro () {
+            resetAngle = getAngle();
+            minusAngle = resetAngle * 0.9;
+            resetAngle = resetAngle - minusAngle;
+            return resetAngle;
+        }
     }
-
-
-    public double getAngle() {
-        imu.getPosition();
-        angle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        return angle.firstAngle;
-    }
-
-    public double resetGyro(){
-        resetAngle = getAngle();
-        minusAngle = resetAngle*0.9;
-        resetAngle = resetAngle - minusAngle;
-        return resetAngle;
-    }
-
-}

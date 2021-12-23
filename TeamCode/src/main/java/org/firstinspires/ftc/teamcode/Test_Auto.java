@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -14,18 +15,23 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
 import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Standard_Bot;
+import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.TankDrive;
+import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Gyro;
 
 @Autonomous(name="Test_Auto", group="Test_Auto")
 public class Test_Auto extends LinearOpMode {
 
     Standard_Bot robot = new Standard_Bot();
+    TankDrive drivetrain = new TankDrive();
+    Gyro gyro = new Gyro();
 
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor frontLeft = null;
-    private DcMotor backLeft = null;
-    private DcMotor frontRight = null;
-    private DcMotor backRight = null;
+    private DcMotorImplEx frontLeft = null;
+    private DcMotorImplEx backLeft = null;
+    private DcMotorImplEx frontRight = null;
+    private DcMotorImplEx backRight = null;
     private DcMotor intakeMotor = null;
     private DcMotor outtakeMotor = null;
     private DcMotor carouselMotor = null;
@@ -35,6 +41,7 @@ public class Test_Auto extends LinearOpMode {
     private Servo capperServo = null;
 
     DistanceSensor sensorRange;
+    DistanceSensor backStop;
 
     BNO055IMU imu;
     Orientation lastAngles = new Orientation();
@@ -45,7 +52,7 @@ public class Test_Auto extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        telemetry.addData("Status", "Initialized");
+        telemetry.addData("Ready", "");
 
         telemetry.update();
         robot.init(hardwareMap);
@@ -63,6 +70,7 @@ public class Test_Auto extends LinearOpMode {
         capperServo = robot.StdCapperServo;
 
         sensorRange = robot.StdDistanceSensor;
+        backStop = robot.StdBackStop;
 
         outtakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -76,25 +84,28 @@ public class Test_Auto extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        double currentAngle = 0;
-        double currentDistance = 0;
-        double minAngle = 0;
-        double minDistance = 100;
-        double globalAngle = 0;
         double allianceHubLevel = 0;
         double angleToTeamElement = 0;
+
+        telemetry.addData("ready", "");
+
+        frontLeft.setVelocity(0, AngleUnit.DEGREES);
+        frontRight.setVelocity(0, AngleUnit.DEGREES);
+        backLeft.setVelocity(0, AngleUnit.DEGREES);
+        backRight.setVelocity(0, AngleUnit.DEGREES);
+        intakeMotor.setPower(0);
+        outtakeMotor.setPower(0);
+        capperMotor.setPower(0);
+        carouselMotor.setPower(0);
 
         waitForStart();
 
         while (opModeIsActive()) {
-
-            threeDump();
-            telemetry.update();
+            twoDump();
             break;
         }
-
-    }
-    public void drive(double right, double left, double power) {
+        }
+    public void drive(double right, double left, double anglrt) {
 
         int rightTarget;
         int leftTarget;
@@ -104,38 +115,44 @@ public class Test_Auto extends LinearOpMode {
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        leftTarget = (int) (left*(33) + frontLeft.getCurrentPosition());
-        rightTarget = (int) (right*(33) + frontRight.getCurrentPosition());
+        leftTarget = (int) (left * (33) + frontLeft.getCurrentPosition());
+        rightTarget = (int) (right * (33) + frontRight.getCurrentPosition());
 
         frontLeft.setTargetPosition(leftTarget);
         backLeft.setTargetPosition(leftTarget);
         frontRight.setTargetPosition(rightTarget);
         backRight.setTargetPosition(rightTarget);
 
+        frontLeft.setVelocity(90, AngleUnit.DEGREES);
+        backLeft.setVelocity(90, AngleUnit.DEGREES);
+        frontRight.setVelocity(90, AngleUnit.DEGREES);
+        backRight.setVelocity(90, AngleUnit.DEGREES);
 
         frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        frontLeft.setPower(power);
-        backLeft.setPower(power);
-        frontRight.setPower(power);
-        backRight.setPower(power);
+        frontLeft.setVelocity(anglrt, AngleUnit.DEGREES);
+        backLeft.setVelocity(anglrt, AngleUnit.DEGREES);
+        frontRight.setVelocity(anglrt, AngleUnit.DEGREES);
+        backRight.setVelocity(anglrt, AngleUnit.DEGREES);
 
-        while (opModeIsActive() && frontLeft.isBusy() && frontRight.isBusy()) {
+        while (opModeIsActive() && frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy()) {
+            if (backStop.getDistance(DistanceUnit.INCH) < 6 ){
+            }
             idle();
         }
 
-        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    /*  frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); */
 
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
-        backLeft.setPower(0);
-        backRight.setPower(0);
+        frontLeft.setVelocity(0, AngleUnit.DEGREES);
+        frontRight.setVelocity(0, AngleUnit.DEGREES);
+        backLeft.setVelocity(0, AngleUnit.DEGREES);
+        backRight.setVelocity(0, AngleUnit.DEGREES);
 
     }
 
@@ -145,53 +162,8 @@ public class Test_Auto extends LinearOpMode {
         return lastAngles.firstAngle;
     }
 
-
-    public void turn(int angle){
-
-        //resetAngle();
-
-        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        if (angle > 0){
-            frontRight.setPower(0.5);
-            backRight.setPower(0.5);
-            frontLeft.setPower(-0.5);
-            backLeft.setPower(-0.5);
-        }
-
-        if (angle < 0) {
-            frontRight.setPower(-0.5);
-            backRight.setPower(-0.5);
-            frontLeft.setPower(0.5);
-            backLeft.setPower(0.5);
-        }
-
-        while (getAngle() > angle & opModeIsActive() & angle > 0){
-            sleep(250);
-            idle();
-        }
-
-        while (getAngle() < angle & opModeIsActive() & angle < 0){
-            sleep(250);
-            idle();
-        }
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        frontRight.setPower(0);
-        backRight.setPower(0);
-        frontLeft.setPower(0);
-        backLeft.setPower(0);
-
-    }
-    private void rotate(int degrees)
-    {
-        double temp = rotate (degrees, 0);
+    private void rotate(int degrees) {
+        double temp = rotate(degrees, 0);
         return;
     }
 
@@ -205,12 +177,12 @@ public class Test_Auto extends LinearOpMode {
         // clockwise (right).
 
         if (degrees < 0) {   // turn right.
-            leftPower = 0.5;
-            rightPower = -0.5;
+            leftPower = 270;
+            rightPower = -270;
         } else if (degrees > 0) {
             // turn left.
-            leftPower = -0.5;
-            rightPower = 0.5;
+            leftPower = -270;
+            rightPower = 270;
         } else return 0;
 
         frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -219,10 +191,10 @@ public class Test_Auto extends LinearOpMode {
         backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // set power to rotate.
-        frontLeft.setPower(leftPower);
-        backLeft.setPower(leftPower);
-        frontRight.setPower(rightPower);
-        backRight.setPower(rightPower);
+        frontLeft.setVelocity(leftPower, AngleUnit.DEGREES);
+        backLeft.setVelocity(leftPower, AngleUnit.DEGREES);
+        frontRight.setVelocity(rightPower, AngleUnit.DEGREES);
+        backRight.setVelocity(rightPower, AngleUnit.DEGREES);
 
         // rotate until turn is completed.
         if (degrees < 0) {
@@ -263,25 +235,28 @@ public class Test_Auto extends LinearOpMode {
         // reset angle tracking on new heading.
         return minAngle;
     }
-    public void outtakeArmDrive( double power, double armInches, int timeout) {
+
+    public void outtakeArmDrive(double power, double armInches, int timeout) {
         int newTarget;
 
         if (opModeIsActive()) {
 
-            newTarget = outtakeMotor.getCurrentPosition() + (int)(armInches);
+            newTarget = outtakeMotor.getCurrentPosition() + (int) (armInches);
             outtakeMotor.setTargetPosition(newTarget);
             outtakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             runtime.reset();
             outtakeMotor.setPower(power);
 
             while (opModeIsActive() && (runtime.seconds() < timeout) && outtakeMotor.isBusy()) {
-                telemetry.addData("PathIA",  "Running to %7d :%7d", newTarget,  outtakeMotor.getCurrentPosition());
+                telemetry.addData("PathIA", "Running to %7d :%7d", newTarget, outtakeMotor.getCurrentPosition());
                 telemetry.update();
-                idle ();
+                idle();
+                outtakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
         }
     }
-    public void threeDump(){
+
+    public void threeDump() {
         outtakeServo.setPosition(0.6);
         sleep(100);
         outtakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -301,5 +276,73 @@ public class Test_Auto extends LinearOpMode {
         outtakeServo.setPosition(1);
         outtakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-}
 
+    public void twoDump() {
+        //outtakeServo.setPosition(0.6);
+        //sleep(100);
+        //outtakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //outtakeMotor.setPower(0.5);
+        //sleep(200);
+        outtakeServo.setPosition(0);
+        telemetry.addData("0", "");
+        telemetry.update();
+        sleep(3000);
+        //sleep(250);
+        outtakeServo.setPosition(0.1);
+        telemetry.addData("0.1", "");
+        telemetry.update();
+        sleep(3000);
+        outtakeServo.setPosition(0.2);
+        telemetry.addData("0.2", "");
+        telemetry.update();
+        sleep(3000);
+        outtakeServo.setPosition(0.3);
+        telemetry.addData("0.3", "");
+        telemetry.update();
+        sleep(3000);
+        outtakeServo.setPosition(0.4);
+        telemetry.addData("0.4", "");
+        telemetry.update();
+        sleep(3000);
+        outtakeServo.setPosition(0.5);
+        telemetry.addData("0.5", "");
+        telemetry.update();
+        sleep(3000);
+        outtakeServo.setPosition(0.6);
+        telemetry.addData("0.6", "");
+        telemetry.update();
+        sleep(3000);
+        outtakeServo.setPosition(0.7);
+        telemetry.addData("0.7", "");
+        telemetry.update();
+        sleep(3000);
+        outtakeServo.setPosition(0.8);
+        telemetry.addData("0.8", "");
+        telemetry.update();
+        sleep(3000);
+        outtakeServo.setPosition(0.9);
+        telemetry.addData("0.9", "");
+        telemetry.update();
+        sleep(3000);
+        outtakeServo.setPosition(1);
+        telemetry.addData("1", "");
+        telemetry.update();
+        sleep(3000);
+
+        //outtakeMotor.setPower(0.5);//down
+        //sleep(700);
+        //outtakeServo.setPosition(0.6);
+        //sleep(100);
+        //outtakeMotor.setPower(0.5);
+        //sleep(600);
+        //outtakeMotor.setPower(0);
+        //outtakeServo.setPosition(1);
+        //outtakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void oneDump() {
+        outtakeServo.setPosition(0.1);
+        sleep(1000);
+        outtakeServo.setPosition(1);
+    }
+}
