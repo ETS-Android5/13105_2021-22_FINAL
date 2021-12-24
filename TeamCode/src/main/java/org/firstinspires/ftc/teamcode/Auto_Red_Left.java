@@ -1,27 +1,27 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorImplEx;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
+        import com.qualcomm.hardware.bosch.BNO055IMU;
+        import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+        import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+        import com.qualcomm.robotcore.hardware.DcMotor;
+        import com.qualcomm.robotcore.hardware.DcMotorImplEx;
+        import com.qualcomm.robotcore.hardware.DistanceSensor;
+        import com.qualcomm.robotcore.hardware.HardwareMap;
+        import com.qualcomm.robotcore.hardware.Servo;
+        import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+        import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+        import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+        import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+        import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+        import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Standard_Bot;
-import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.TankDrive;
-import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Gyro;
+        import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Standard_Bot;
+        import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.TankDrive;
+        import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Gyro;
 
-@Autonomous(name="Auto_Blue_Left", group="Auto_Blue_Left")
-public class Auto_Blue_Left extends LinearOpMode {
+@Autonomous(name="Auto_Red_Left", group="Auto_Red_Left")
+public class Auto_Red_Left extends LinearOpMode {
 
     Standard_Bot robot = new Standard_Bot();
     TankDrive drivetrain = new TankDrive();
@@ -119,28 +119,28 @@ public class Auto_Blue_Left extends LinearOpMode {
                 threeDump();
                 drive(5, 5, 360);
                 sleep(250);
-                rotate(-75);
+                rotate(80);
                 sleep(250);
-                drive(75, 75, 720);
+                drive(80, 80, 720);
             }
             else if (allianceHubLevel == 2) {
                 drive(-15, -15, 360);
                 sleep(250);
                 twoDump();
                 sleep(250);
-                rotate(-75);
+                rotate(80);
                 sleep(250);
-                drive(65, 65, 720);
+                drive(80, 80, 720);
             }
             else if (allianceHubLevel == 1) {
                 drive(-22, -22, 360);
                 sleep(250);
                 oneDump();
-                drive(7, 7, 360);
+                drive(5, 5, 360);
                 sleep(250);
-                rotate(-75);
+                rotate(90);
                 sleep(250);
-                drive(65, 65, 720);
+                drive(80, 80, 720);
             }
             else {
             }
