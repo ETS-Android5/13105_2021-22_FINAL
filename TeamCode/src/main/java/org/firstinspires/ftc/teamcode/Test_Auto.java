@@ -86,7 +86,6 @@ public class Test_Auto extends LinearOpMode {
 
         double allianceHubLevel = 0;
         double angleToTeamElement = 0;
-        double outtakeAngle = 0;
 
         telemetry.addData("ready", "");
 
@@ -102,10 +101,23 @@ public class Test_Auto extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            oneDump();
+            drive(-3, -3, 360); // Move away from the wall
+            sleep(250);
+            rotate(-50); // Get ready to scan
+            sleep(250);
+            angleToTeamElement = rotate(20, 0); // Scan for the team element
+            telemetry.addData("angleToTeamElement", String.valueOf(angleToTeamElement));
+            telemetry.update();
+            sleep(10000);
+            //sleep(250);
+            //if (angleToTeamElement > 35.0) {allianceHubLevel = 3;}
+            //else if (angleToTeamElement > 14 && angleToTeamElement < 35) {allianceHubLevel = 2;}
+            //else {allianceHubLevel = 1;}
+            //sleep(10000);
             break;
         }
-        }
+
+    }
     public void drive(double right, double left, double anglrt) {
 
         int rightTarget;
@@ -141,6 +153,11 @@ public class Test_Auto extends LinearOpMode {
 
         while (opModeIsActive() && frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy()) {
             if (backStop.getDistance(DistanceUnit.INCH) < 6 ){
+                frontLeft.setVelocity(0);
+                frontRight.setVelocity(0);
+                backLeft.setVelocity(0);
+                backRight.setVelocity(0);
+                break;
             }
             idle();
         }
@@ -232,6 +249,7 @@ public class Test_Auto extends LinearOpMode {
         sleep(100);
 
         telemetry.addData("Min Dist: " + minDistance, "; Min Angle: " + minAngle);
+        sleep(1000);
         telemetry.update();
         // reset angle tracking on new heading.
         return minAngle;
@@ -266,13 +284,13 @@ public class Test_Auto extends LinearOpMode {
         outtakeServo.setPosition(0);
         sleep(250);
         outtakeMotor.setPower(-0.5);
-        sleep(600);
+        sleep(500);
         outtakeMotor.setPower(0.5);//down
         sleep(500);
         outtakeServo.setPosition(0.15);
         sleep(100);
         outtakeMotor.setPower(0.5);
-        sleep(600);
+        sleep(400);
         outtakeMotor.setPower(0);
         outtakeServo.setPosition(0);
     }

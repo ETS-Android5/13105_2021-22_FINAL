@@ -20,8 +20,8 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
         import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.TankDrive;
         import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Gyro;
 
-@Autonomous(name="Auto_Red_Left", group="Auto_Red_Left")
-public class Auto_Red_Left extends LinearOpMode {
+@Autonomous(name="Auto_Red_Right", group="Auto_Red_Right")
+public class Auto_Red_Right extends LinearOpMode {
 
     Standard_Bot robot = new Standard_Bot();
     TankDrive drivetrain = new TankDrive();
@@ -103,25 +103,26 @@ public class Auto_Red_Left extends LinearOpMode {
         while (opModeIsActive()) {
             drive(-3, -3, 360); // Move away from the wall
             sleep(250);
-            rotate(50); // Get ready to scan
+            rotate(-50); // Get ready to scan
             sleep(250);
-            angleToTeamElement = rotate(-20, 0); // Scan for the team element
+            angleToTeamElement = rotate(20, 0); // Scan for the team element
             sleep(250);
-            if (angleToTeamElement > 35.0) {allianceHubLevel = 1;}
-            else if (angleToTeamElement > 14 && angleToTeamElement < 35) {allianceHubLevel = 2; }
-            else {allianceHubLevel = 3;}
-            telemetry.addData("allianceHubLevel", String.valueOf(allianceHubLevel));
+            if (angleToTeamElement < -4) {allianceHubLevel = 3;}
+            else if (angleToTeamElement > -4 && angleToTeamElement < 13) {allianceHubLevel = 2; }
+            else {allianceHubLevel = 1;}
+            telemetry.addData("angleToTeamElement", String.valueOf(angleToTeamElement));
             telemetry.update();
+            sleep(250);
 
             if (allianceHubLevel == 3) {
                 drive(-25, -25,360);
                 sleep(250);
                 threeDump();
-                drive(5, 5, 360);
+                drive(9, 9, 360);
                 sleep(250);
                 rotate(80);
                 sleep(250);
-                drive(80, 80, 720);
+                drive(50, 50, 720);
             }
             else if (allianceHubLevel == 2) {
                 drive(-15, -15, 360);
@@ -130,17 +131,17 @@ public class Auto_Red_Left extends LinearOpMode {
                 sleep(250);
                 rotate(80);
                 sleep(250);
-                drive(80, 80, 720);
+                drive(50, 50, 720);
             }
             else if (allianceHubLevel == 1) {
                 drive(-22, -22, 360);
                 sleep(250);
                 oneDump();
-                drive(5, 5, 360);
+                drive(7, 7, 360);
                 sleep(250);
                 rotate(90);
                 sleep(250);
-                drive(80, 80, 720);
+                drive(50, 50, 720);
             }
             else {
             }
@@ -266,6 +267,11 @@ public class Auto_Red_Left extends LinearOpMode {
             while (opModeIsActive() && getAngle() == 0) {
             }
             while (opModeIsActive() && (currentAngle = getAngle()) < degrees) {
+                currentDistance = sensorRange.getDistance(DistanceUnit.INCH);
+                if (currentDistance < minDistance) {
+                    minDistance = currentDistance;
+                    minAngle = currentAngle;
+                }
             }
         }
         // turn the motors off.
