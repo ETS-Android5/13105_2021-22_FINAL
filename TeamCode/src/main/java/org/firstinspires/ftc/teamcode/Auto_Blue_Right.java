@@ -1,34 +1,37 @@
 package org.firstinspires.ftc.teamcode;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorImplEx;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Gyro;
-import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.TankDrive;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Standard_Bot;
+import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.TankDrive;
+import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Gyro;
 
 @Autonomous(name="Auto_Blue_Right", group="Auto_Blue_Right")
 public class Auto_Blue_Right extends LinearOpMode {
 
     Standard_Bot robot = new Standard_Bot();
+    TankDrive drivetrain = new TankDrive();
+    Gyro gyro = new Gyro();
 
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor frontLeft = null;
-    private DcMotor backLeft = null;
-    private DcMotor frontRight = null;
-    private DcMotor backRight = null;
+    private DcMotorImplEx frontLeft = null;
+    private DcMotorImplEx backLeft = null;
+    private DcMotorImplEx frontRight = null;
+    private DcMotorImplEx backRight = null;
     private DcMotor intakeMotor = null;
     private DcMotor outtakeMotor = null;
     private DcMotor carouselMotor = null;
@@ -38,6 +41,7 @@ public class Auto_Blue_Right extends LinearOpMode {
     private Servo capperServo = null;
 
     DistanceSensor sensorRange;
+    DistanceSensor backStop;
 
     BNO055IMU imu;
     Orientation lastAngles = new Orientation();
@@ -48,7 +52,7 @@ public class Auto_Blue_Right extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        telemetry.addData("Status", "Initialized");
+        telemetry.addData("Ready", "");
 
         telemetry.update();
         robot.init(hardwareMap);
@@ -66,6 +70,7 @@ public class Auto_Blue_Right extends LinearOpMode {
         capperServo = robot.StdCapperServo;
 
         sensorRange = robot.StdDistanceSensor;
+        backStop = robot.StdBackStop;
 
         outtakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -79,62 +84,74 @@ public class Auto_Blue_Right extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        double currentAngle = 0;
-        double currentDistance = 0;
-        double minAngle = 0;
-        double minDistance = 100;
-        double globalAngle = 0;
         double allianceHubLevel = 0;
         double angleToTeamElement = 0;
+
+        telemetry.addData("ready", "");
+
+        frontLeft.setVelocity(0, AngleUnit.DEGREES);
+        frontRight.setVelocity(0, AngleUnit.DEGREES);
+        backLeft.setVelocity(0, AngleUnit.DEGREES);
+        backRight.setVelocity(0, AngleUnit.DEGREES);
+        intakeMotor.setPower(0);
+        outtakeMotor.setPower(0);
+        capperMotor.setPower(0);
+        carouselMotor.setPower(0);
 
         waitForStart();
 
         while (opModeIsActive()) {
+            drive(-3, -3, 360); // Move away from the wall
+            sleep(250);
+            rotate(-50); // Get ready to scan
+            sleep(250);
+            angleToTeamElement = rotate(20, 0); // Scan for the team element
+            sleep(250);
+            if (angleToTeamElement < -100) {allianceHubLevel = 3;}
+            else if (angleToTeamElement > -25 && angleToTeamElement < -10) {allianceHubLevel = 2; }
+            else {allianceHubLevel = 1;}
+            telemetry.addData("angleToTeamElement", String.valueOf(angleToTeamElement));
+            telemetry.update();
+            sleep(250);
 
-            drive(-3, -3, 0.5);             // Move away from the wall
-            sleep(1000);
-            rotate(25);                             // Get ready to scan
-            sleep(1000);
-            angleToTeamElement = rotate(-50, 0);    // Scan for the team element
-            sleep(2000);
-            if (angleToTeamElement < -35.0) {allianceHubLevel = 1;}
-            else if (angleToTeamElement < -17.0) {allianceHubLevel = 2;}
-            else {allianceHubLevel = 3;}
-
-            // Take different actions based upon the hub level
             if (allianceHubLevel == 3) {
-                intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                intakeMotor.setPower(-0.6);
-                sleep(3000);
-                intakeMotor.setPower(0.0);
-                intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                drive(-25, -25,360);
+                sleep(250);
+                threeDump();
+//                drive(9, 9, 360);
+//                sleep(250);
+//                rotate(80);
+//                sleep(250);
+//                drive(50, 50, 720);
             }
-            else if (allianceHubLevel == 2){
-                rotate(55);
-                sleep(1000);
-                outtakeArmDrive(0.3, -38, 2);
-                sleep (1500);
-                drive(13, 13, 0.5);
-                sleep(2000);
-                intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                intakeMotor.setPower(-0.6);
-                sleep (3000);
-                intakeMotor.setPower (0.0);
-                intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            else if (allianceHubLevel == 2) {
+                drive(-15, -15, 360);
+                sleep(250);
+                twoDump();
+                //sleep(250);
+                //rotate(80);
+                //sleep(250);
+                //drive(50, 50, 720);
             }
-            else if (allianceHubLevel == 1){
+            else if (allianceHubLevel == 1) {
+                drive(-22, -22, 360);
+                sleep(250);
+                oneDump();
+//                drive(7, 7, 360);
+//                sleep(250);
+//                rotate(90);
+//                sleep(250);
+//                drive(50, 50, 720);
+            }
 
-            }
-            else {}     // This is an error
-            outtakeArmDrive(0.3, 6, 1);
-            sleep (1500);
+            sleep(1500);
 
             telemetry.update();
             break;
         }
 
     }
-    public void drive(double right, double left, double power) {
+    public void drive(double right, double left, double anglrt) {
 
         int rightTarget;
         int leftTarget;
@@ -144,38 +161,49 @@ public class Auto_Blue_Right extends LinearOpMode {
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        leftTarget = (int) (left*(33) + frontLeft.getCurrentPosition());
-        rightTarget = (int) (right*(33) + frontRight.getCurrentPosition());
+        leftTarget = (int) (left * (33) + frontLeft.getCurrentPosition());
+        rightTarget = (int) (right * (33) + frontRight.getCurrentPosition());
 
         frontLeft.setTargetPosition(leftTarget);
         backLeft.setTargetPosition(leftTarget);
         frontRight.setTargetPosition(rightTarget);
         backRight.setTargetPosition(rightTarget);
 
+        frontLeft.setVelocity(90, AngleUnit.DEGREES);
+        backLeft.setVelocity(90, AngleUnit.DEGREES);
+        frontRight.setVelocity(90, AngleUnit.DEGREES);
+        backRight.setVelocity(90, AngleUnit.DEGREES);
 
         frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        frontLeft.setPower(power);
-        backLeft.setPower(power);
-        frontRight.setPower(power);
-        backRight.setPower(power);
+        frontLeft.setVelocity(anglrt, AngleUnit.DEGREES);
+        backLeft.setVelocity(anglrt, AngleUnit.DEGREES);
+        frontRight.setVelocity(anglrt, AngleUnit.DEGREES);
+        backRight.setVelocity(anglrt, AngleUnit.DEGREES);
 
-        while (opModeIsActive() && frontLeft.isBusy() && frontRight.isBusy()) {
+        while (opModeIsActive() && frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy()) {
+            if (backStop.getDistance(DistanceUnit.INCH) < 6 ){
+                frontLeft.setVelocity(0);
+                frontRight.setVelocity(0);
+                backLeft.setVelocity(0);
+                backRight.setVelocity(0);
+                break;
+            }
             idle();
         }
 
-        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    /*  frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); */
 
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
-        backLeft.setPower(0);
-        backRight.setPower(0);
+        frontLeft.setVelocity(0, AngleUnit.DEGREES);
+        frontRight.setVelocity(0, AngleUnit.DEGREES);
+        backLeft.setVelocity(0, AngleUnit.DEGREES);
+        backRight.setVelocity(0, AngleUnit.DEGREES);
 
     }
 
@@ -185,53 +213,8 @@ public class Auto_Blue_Right extends LinearOpMode {
         return lastAngles.firstAngle;
     }
 
-
-    public void turn(int angle){
-
-        //resetAngle();
-
-        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        if (angle > 0){
-            frontRight.setPower(0.5);
-            backRight.setPower(0.5);
-            frontLeft.setPower(-0.5);
-            backLeft.setPower(-0.5);
-        }
-
-        if (angle < 0) {
-            frontRight.setPower(-0.5);
-            backRight.setPower(-0.5);
-            frontLeft.setPower(0.5);
-            backLeft.setPower(0.5);
-        }
-
-        while (getAngle() > angle & opModeIsActive() & angle > 0){
-            sleep(250);
-            idle();
-        }
-
-        while (getAngle() < angle & opModeIsActive() & angle < 0){
-            sleep(250);
-            idle();
-        }
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        frontRight.setPower(0);
-        backRight.setPower(0);
-        frontLeft.setPower(0);
-        backLeft.setPower(0);
-
-    }
-    private void rotate(int degrees)
-    {
-        double temp = rotate (degrees, 0);
+    private void rotate(int degrees) {
+        double temp = rotate(degrees, 0);
         return;
     }
 
@@ -245,12 +228,12 @@ public class Auto_Blue_Right extends LinearOpMode {
         // clockwise (right).
 
         if (degrees < 0) {   // turn right.
-            leftPower = 0.5;
-            rightPower = -0.5;
+            leftPower = 270;
+            rightPower = -270;
         } else if (degrees > 0) {
             // turn left.
-            leftPower = -0.5;
-            rightPower = 0.5;
+            leftPower = -270;
+            rightPower = 270;
         } else return 0;
 
         frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -259,10 +242,10 @@ public class Auto_Blue_Right extends LinearOpMode {
         backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // set power to rotate.
-        frontLeft.setPower(leftPower);
-        backLeft.setPower(leftPower);
-        frontRight.setPower(rightPower);
-        backRight.setPower(rightPower);
+        frontLeft.setVelocity(leftPower, AngleUnit.DEGREES);
+        backLeft.setVelocity(leftPower, AngleUnit.DEGREES);
+        frontRight.setVelocity(rightPower, AngleUnit.DEGREES);
+        backRight.setVelocity(rightPower, AngleUnit.DEGREES);
 
         // rotate until turn is completed.
         if (degrees < 0) {
@@ -282,6 +265,11 @@ public class Auto_Blue_Right extends LinearOpMode {
             while (opModeIsActive() && getAngle() == 0) {
             }
             while (opModeIsActive() && (currentAngle = getAngle()) < degrees) {
+                currentDistance = sensorRange.getDistance(DistanceUnit.INCH);
+                if (currentDistance < minDistance) {
+                    minDistance = currentDistance;
+                    minAngle = currentAngle;
+                }
             }
         }
         // turn the motors off.
@@ -303,23 +291,71 @@ public class Auto_Blue_Right extends LinearOpMode {
         // reset angle tracking on new heading.
         return minAngle;
     }
-    public void outtakeArmDrive( double power, double armInches, int timeout) {
+
+    public void outtakeArmDrive(double power, double armInches, int timeout) {
         int newTarget;
 
         if (opModeIsActive()) {
 
-            newTarget = outtakeMotor.getCurrentPosition() + (int)(armInches);
+            newTarget = outtakeMotor.getCurrentPosition() + (int) (armInches);
             outtakeMotor.setTargetPosition(newTarget);
             outtakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             runtime.reset();
             outtakeMotor.setPower(power);
 
-              while (opModeIsActive() && (runtime.seconds() < timeout) && outtakeMotor.isBusy()) {
-                telemetry.addData("PathIA",  "Running to %7d :%7d", newTarget,  outtakeMotor.getCurrentPosition());
+            while (opModeIsActive() && (runtime.seconds() < timeout) && outtakeMotor.isBusy()) {
+                telemetry.addData("PathIA", "Running to %7d :%7d", newTarget, outtakeMotor.getCurrentPosition());
                 telemetry.update();
-                idle ();
+                idle();
+                outtakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
         }
     }
-}
 
+    public void threeDump() {
+        outtakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        outtakeServo.setPosition(0.15);
+        sleep(250);
+        outtakeMotor.setPower(-0.5);
+        sleep(500);
+        outtakeServo.setPosition(0);
+        sleep(250);
+        outtakeMotor.setPower(-0.5);
+        sleep(500);
+        outtakeMotor.setPower(0.5);//down
+        sleep(500);
+        outtakeServo.setPosition(0.15);
+        sleep(100);
+        outtakeMotor.setPower(0.5);
+        sleep(400);
+        outtakeMotor.setPower(0);
+        outtakeServo.setPosition(0);
+    }
+
+    public void twoDump() {
+        outtakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        outtakeServo.setPosition(0.15);
+        sleep(250);
+        outtakeMotor.setPower(0.5);
+        sleep(500);
+        outtakeMotor.setPower(0);
+        outtakeServo.setPosition(0.5);
+        sleep(500);
+        outtakeServo.setPosition(0.15);//down
+        sleep(250);
+        outtakeMotor.setPower(-0.5);
+        sleep(500);
+        outtakeMotor.setPower(0);
+        outtakeServo.setPosition(0);
+        sleep(250);
+    }
+
+    public void oneDump() {
+        outtakeServo.setPosition(0.55);
+        sleep(500);
+        outtakeServo.setPosition(0);
+        sleep(250);
+        outtakeServo.setPosition(0);
+        sleep(250);
+    }
+}
