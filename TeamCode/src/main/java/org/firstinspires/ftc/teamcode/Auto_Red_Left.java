@@ -354,4 +354,23 @@ public class Auto_Red_Left extends LinearOpMode {
         outtakeServo.setPosition(0);
         sleep(250);
     }
+
+    public void carousel() {
+        rotate(-80);
+        drive(-50, -50, 360);
+        sleep(250);
+        drive(5, 5, 360);
+        sleep(250);
+        rotate(-170);
+        drive(-10, -10, 180);
+        capperMotor.setPower(-0.5);
+        sleep(500);
+        capperMotor.setPower(0);
+        sleep(250);
+        carouselMotor.setPower(-0.3);
+        sleep(5000);
+        carouselMotor.setPower(0);
+        sleep(250);
+        drive(17, 17, 360);
+    }
 }

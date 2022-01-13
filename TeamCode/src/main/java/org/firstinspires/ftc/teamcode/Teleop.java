@@ -116,15 +116,7 @@ public class Teleop extends LinearOpMode {
                         intakeMotor.setPower(0);
             }
 
-            if (gamepad2.y) {
-                outtakeMotor.setPower(0.25);
-            }
-                else if (gamepad2.x){
-                    outtakeMotor.setPower(-0.25);
-            }
-                    else {
-                        outtakeMotor.setPower(0);
-            }
+            outtakeMotor.setPower(gamepad2.left_stick_y);
 
             if (gamepad2.left_bumper) {
                 capperMotor.setPower(0.4);
@@ -147,11 +139,17 @@ public class Teleop extends LinearOpMode {
             }
 
             if (gamepad2.dpad_up) {
-                outtakeServo.setPosition(1);
+                threeDump();
+            }
+            if (gamepad2.x) {
+                twoDump();
+            }
+            if (gamepad2.y) {
+                oneDump();
             }
 
             if (gamepad2.dpad_down) {
-                outtakeServo.setPosition(0.6);
+                outtakeServo.setPosition(0);
             }
 
             if (gamepad2.dpad_left) {
@@ -162,34 +160,59 @@ public class Teleop extends LinearOpMode {
                 capperServo.setPosition(0.5);
             }
 
-            if (gamepad1.left_bumper) {
-                //servoPosition = servoPosition + 10;
-                //sleep(500);
-                //outtakeServo.setPosition(servoPosition);
-            }
-            if (gamepad1.dpad_right){
-                //servoPosition = servoPosition - 10;
-                //sleep(500);
-                //outtakeServo.setPosition(servoPosition);
-                //sleep(250);
-                //outtakeMotor.setTargetPosition(130);
-                //outtakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                //sleep(250);
-                //outtakeServo.setPosition(80);
-                //sleep(250);
-            }
-
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.update();
-
-            //outtakeMotor.setPower(0);
-            //intakeMotor.setPower(0);
-            //carouselMotor.setPower(0);
-            //capperMotor.setPower(0);
             telemetry.addData("servoPosition", String.valueOf(servoPosition));
-
+            telemetry.update();
             idle();
         }
     }
+
+    public void threeDump() {
+        outtakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        outtakeServo.setPosition(0.15);
+        sleep(250);
+        outtakeMotor.setPower(-0.5);
+        sleep(500);
+        outtakeServo.setPosition(0);
+        sleep(250);
+        outtakeMotor.setPower(-0.5);
+        sleep(500);
+        outtakeMotor.setPower(0.5);//down
+        sleep(500);
+        outtakeServo.setPosition(0.15);
+        sleep(100);
+        outtakeMotor.setPower(0.5);
+        sleep(400);
+        outtakeMotor.setPower(0);
+        outtakeServo.setPosition(0);
+    }
+
+    public void twoDump() {
+        outtakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        outtakeServo.setPosition(0.15);
+        sleep(250);
+        outtakeMotor.setPower(0.5);
+        sleep(500);
+        outtakeMotor.setPower(0);
+        outtakeServo.setPosition(0.5);
+        sleep(500);
+        outtakeServo.setPosition(0.15);//down
+        sleep(250);
+        outtakeMotor.setPower(-0.5);
+        sleep(500);
+        outtakeMotor.setPower(0);
+        outtakeServo.setPosition(0);
+        sleep(250);
+    }
+
+    public void oneDump() {
+        outtakeServo.setPosition(0.55);
+        sleep(500);
+        outtakeServo.setPosition(0);
+        sleep(250);
+        outtakeServo.setPosition(0);
+        sleep(250);
+    }
+
 }

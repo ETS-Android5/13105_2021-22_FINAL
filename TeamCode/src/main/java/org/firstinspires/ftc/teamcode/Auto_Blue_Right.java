@@ -101,14 +101,14 @@ public class Auto_Blue_Right extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            drive(-3, -3, 360); // Move away from the wall
+            drive(-5, -5, 360); // Move away from the wall
             sleep(250);
-            rotate(-50); // Get ready to scan
+            rotate(-30); // Get ready to scan
             sleep(250);
             angleToTeamElement = rotate(20, 0); // Scan for the team element
             sleep(250);
-            if (angleToTeamElement < -100) {allianceHubLevel = 3;}
-            else if (angleToTeamElement > -25 && angleToTeamElement < -10) {allianceHubLevel = 2; }
+            if (angleToTeamElement < -10) {allianceHubLevel = 3;}
+            else if (angleToTeamElement > -10 && angleToTeamElement < 10) {allianceHubLevel = 2;}
             else {allianceHubLevel = 1;}
             telemetry.addData("angleToTeamElement", String.valueOf(angleToTeamElement));
             telemetry.update();
@@ -118,31 +118,32 @@ public class Auto_Blue_Right extends LinearOpMode {
                 drive(-25, -25,360);
                 sleep(250);
                 threeDump();
-//                drive(9, 9, 360);
-//                sleep(250);
-//                rotate(80);
-//                sleep(250);
-//                drive(50, 50, 720);
-            }
+                drive(9, 9, 360);
+                sleep(250);
+                carousel();
+                }
             else if (allianceHubLevel == 2) {
                 drive(-15, -15, 360);
                 sleep(250);
                 twoDump();
-                //sleep(250);
-                //rotate(80);
-                //sleep(250);
-                //drive(50, 50, 720);
-            }
+                sleep(250);
+                capperMotor.setPower(0.5);
+                sleep(500);
+                capperMotor.setPower(0);
+                rotate(-80);
+                drive(-30, -30, 180);
+                }
             else if (allianceHubLevel == 1) {
                 drive(-22, -22, 360);
                 sleep(250);
                 oneDump();
-//                drive(7, 7, 360);
-//                sleep(250);
-//                rotate(90);
-//                sleep(250);
-//                drive(50, 50, 720);
-            }
+                drive(7, 7, 360);
+                capperMotor.setPower(0.5);
+                sleep(500);
+                capperMotor.setPower(0);
+                rotate(-80);
+                drive(-30, -30, 180);
+                }
 
             sleep(1500);
 
@@ -357,5 +358,24 @@ public class Auto_Blue_Right extends LinearOpMode {
         sleep(250);
         outtakeServo.setPosition(0);
         sleep(250);
+    }
+
+    public void carousel() {
+        rotate(-80);
+        drive(-50, -50, 360);
+        sleep(250);
+        drive(5, 5, 360);
+        sleep(250);
+        rotate(-170);
+        drive(-10, -10, 180);
+        capperMotor.setPower(-0.5);
+        sleep(500);
+        capperMotor.setPower(0);
+        sleep(250);
+        carouselMotor.setPower(-0.3);
+        sleep(5000);
+        carouselMotor.setPower(0);
+        sleep(250);
+        drive(17, 17, 360);
     }
 }

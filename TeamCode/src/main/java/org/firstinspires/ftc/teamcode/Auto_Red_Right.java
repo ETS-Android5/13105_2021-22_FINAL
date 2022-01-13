@@ -107,8 +107,8 @@ public class Auto_Red_Right extends LinearOpMode {
             sleep(250);
             angleToTeamElement = rotate(20, 0); // Scan for the team element
             sleep(250);
-            if (angleToTeamElement < -4) {allianceHubLevel = 3;}
-            else if (angleToTeamElement > -4 && angleToTeamElement < 13) {allianceHubLevel = 2; }
+            if (angleToTeamElement < -10) {allianceHubLevel = 3;}
+            else if (angleToTeamElement > -10 && angleToTeamElement < 10) {allianceHubLevel = 2;}
             else {allianceHubLevel = 1;}
             telemetry.addData("angleToTeamElement", String.valueOf(angleToTeamElement));
             telemetry.update();
