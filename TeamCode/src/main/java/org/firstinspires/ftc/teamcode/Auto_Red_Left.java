@@ -101,7 +101,7 @@ public class Auto_Red_Left extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            drive(-3, -3, 360); // Move away from the wall
+            drive(-5, -5, 360); // Move away from the wall
             sleep(250);
             rotate(50); // Get ready to scan
             sleep(250);
@@ -114,33 +114,31 @@ public class Auto_Red_Left extends LinearOpMode {
             telemetry.update();
 
             if (allianceHubLevel == 3) {
-                drive(-25, -25,360);
+                drive(-23, -23,360);
                 sleep(250);
                 threeDump();
-                drive(5, 5, 360);
+                drive(10, 10, 360);
                 sleep(250);
-                rotate(80);
+                carousel();
                 sleep(250);
-                drive(80, 80, 720);
             }
             else if (allianceHubLevel == 2) {
                 drive(-15, -15, 360);
                 sleep(250);
                 twoDump();
                 sleep(250);
-                rotate(80);
+                drive(2,2,360);
+                carousel();
                 sleep(250);
-                drive(80, 80, 720);
             }
             else if (allianceHubLevel == 1) {
                 drive(-22, -22, 360);
                 sleep(250);
                 oneDump();
-                drive(5, 5, 360);
+                drive(9, 9, 360);
                 sleep(250);
-                rotate(90);
+                carousel();
                 sleep(250);
-                drive(80, 80, 720);
             }
             else {
             }
@@ -356,21 +354,27 @@ public class Auto_Red_Left extends LinearOpMode {
     }
 
     public void carousel() {
-        rotate(-80);
+        rotate(80);
         drive(-50, -50, 360);
         sleep(250);
-        drive(5, 5, 360);
+        drive(10, 10, 360);
         sleep(250);
-        rotate(-170);
-        drive(-10, -10, 180);
+        rotate(100);
+        drive(-8, -8, 180);
         capperMotor.setPower(-0.5);
-        sleep(500);
+        sleep(900);
         capperMotor.setPower(0);
         sleep(250);
-        carouselMotor.setPower(-0.3);
+        carouselMotor.setPower(0.3);
         sleep(5000);
         carouselMotor.setPower(0);
         sleep(250);
-        drive(17, 17, 360);
+        drive(5, 5, 360);
+        sleep(250);
+//        drive(10,10,360);
+//        sleep(250);
+//        rotate(-10);
+//        sleep(250);
+//        drive(60,60,360);
     }
 }

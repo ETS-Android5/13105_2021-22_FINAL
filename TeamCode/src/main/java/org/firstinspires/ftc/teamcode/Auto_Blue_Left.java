@@ -101,7 +101,7 @@ public class Auto_Blue_Left extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            drive(-3, -3, 360); // Move away from the wall
+            drive(-5, -5, 360); // Move away from the wall
             sleep(250);
             rotate(50); // Get ready to scan
             sleep(250);
@@ -114,7 +114,7 @@ public class Auto_Blue_Left extends LinearOpMode {
             telemetry.update();
 
             if (allianceHubLevel == 3) {
-                drive(-25, -25,360);
+                drive(-23, -23,360);
                 sleep(250);
                 threeDump();
                 drive(5, 5, 360);

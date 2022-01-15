@@ -11,11 +11,11 @@ import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 
 public class Standard_Bot {
 
-    public DcMotorImplEx StdFrontRight   = null;
-    public DcMotorImplEx StdBackRight  = null;
-    public DcMotorImplEx StdFrontLeft   = null;
+    public DcMotorImplEx StdFrontRight = null;
+    public DcMotorImplEx StdBackRight = null;
+    public DcMotorImplEx StdFrontLeft = null;
     public DcMotorImplEx StdBackLeft = null;
-    public DcMotor StdIntakeMotor  = null;
+    public DcMotor StdIntakeMotor = null;
     public DcMotor StdCapperMotor = null;
     public DcMotor StdCarouselMotor = null;
     public DcMotor StdOuttakeMotor = null;

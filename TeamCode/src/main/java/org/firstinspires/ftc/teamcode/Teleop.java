@@ -4,6 +4,7 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -12,6 +13,7 @@ import com.qualcomm.robotcore.hardware.GyroSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Standard_Bot;
 import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.TankDrive;
 
@@ -34,6 +36,8 @@ public class Teleop extends LinearOpMode {
     private Servo outtakeServo = null;
     private Servo capperServo = null;
 
+    private DistanceSensor backStop = null;
+
     HardwareMap hwMap = null;
 
     @Override
@@ -50,6 +54,8 @@ public class Teleop extends LinearOpMode {
         outtakeMotor = robot.StdOuttakeMotor;
         carouselMotor = robot.StdCarouselMotor;
         capperMotor = robot.StdCapperMotor;
+
+        backStop = robot.StdBackStop;
 
         capperServo = robot.StdCapperServo;
         outtakeServo = robot.StdOuttakeServo;
@@ -80,62 +86,56 @@ public class Teleop extends LinearOpMode {
             backLeft.setPower(drivePower + rotatePower);
             backRight.setPower(drivePower - rotatePower);
 
+            if (backStop.getDistance(DistanceUnit.INCH) < 6) {
+                frontLeft.setPower(0);
+                frontRight.setPower(0);
+                backRight.setPower(0);
+                backLeft.setPower(0);
+            }
+
             encoderCount = outtakeMotor.getCurrentPosition();
 
-            while (gamepad1.dpad_up){
+            while (gamepad1.dpad_up) {
                 frontLeft.setPower(0.25);
                 frontRight.setPower(0.25);
                 backLeft.setPower(0.25);
                 backRight.setPower(0.25);
             }
-            while (gamepad1.dpad_down){
+            while (gamepad1.dpad_down) {
                 frontLeft.setPower(-0.25);
                 frontRight.setPower(-0.25);
                 backLeft.setPower(-0.25);
                 backRight.setPower(-0.25);
             }
-            while (gamepad1.dpad_right){
-                frontLeft.setPower(0.25);
-                frontRight.setPower(0.25);
-                backLeft.setPower(-0.25);
-                backRight.setPower(-0.25);
-            }
-            while (gamepad1.dpad_left){
-                frontLeft.setPower(-0.25);
-                frontRight.setPower(-0.25);
-                backLeft.setPower(0.25);
-                backRight.setPower(0.25);
-            }
+
             if (gamepad1.a) {
                 intakeMotor.setPower(1);
-            }
-                else if (gamepad1.b){
-                    intakeMotor.setPower(-1);
-            }
-                    else {
-                        intakeMotor.setPower(0);
+            } else if (gamepad1.b) {
+                intakeMotor.setPower(-1);
+            } else {
+                intakeMotor.setPower(0);
             }
 
-            outtakeMotor.setPower(gamepad2.left_stick_y);
+            outtakeMotor.setPower(gamepad2.left_stick_y * 0.5);
+
+            if (gamepad2.right_stick_y < 0) {
+                outtakeServo.setPosition(0.15);
+            }
 
             if (gamepad2.left_bumper) {
-                capperMotor.setPower(0.4);
-            }
-                else if (gamepad2.right_bumper) {
-                    capperMotor.setPower(-0.4);
-            }
-                    else {
-                        capperMotor.setPower(0);
+                capperMotor.setPower(0.25);
+            } else if (gamepad2.right_bumper) {
+                capperMotor.setPower(-0.25);
+            } else {
+                capperMotor.setPower(0);
             }
 
-            if (gamepad2.a){
-                carouselMotor.setPower(0.75);
-            }
-                else if (gamepad2.b){
-                    carouselMotor.setPower(-0.75);
-            }
-                    else{
-                        carouselMotor.setPower(0);
+            if (gamepad2.a) {
+                carouselMotor.setPower(-0.5);
+            } else if (gamepad2.b) {
+                carouselMotor.setPower(0.5);
+            } else {
+                carouselMotor.setPower(0);
             }
 
             if (gamepad2.dpad_up) {
@@ -169,50 +169,58 @@ public class Teleop extends LinearOpMode {
     }
 
     public void threeDump() {
-        outtakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        outtakeServo.setPosition(0.15);
-        sleep(250);
-        outtakeMotor.setPower(-0.5);
-        sleep(500);
-        outtakeServo.setPosition(0);
-        sleep(250);
-        outtakeMotor.setPower(-0.5);
-        sleep(500);
-        outtakeMotor.setPower(0.5);//down
-        sleep(500);
-        outtakeServo.setPosition(0.15);
-        sleep(100);
-        outtakeMotor.setPower(0.5);
-        sleep(400);
-        outtakeMotor.setPower(0);
-        outtakeServo.setPosition(0);
+        if (frontLeft.isBusy() && frontRight.isBusy()) {}
+        else {
+            outtakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            outtakeServo.setPosition(0.15);
+            sleep(250);
+            outtakeMotor.setPower(-0.5);
+            sleep(500);
+            outtakeServo.setPosition(0);
+            sleep(250);
+            outtakeMotor.setPower(-0.5);
+            sleep(500);
+            outtakeMotor.setPower(0.5);//down
+            sleep(500);
+            outtakeServo.setPosition(0.15);
+            sleep(100);
+            outtakeMotor.setPower(0.5);
+            sleep(400);
+            outtakeMotor.setPower(0);
+            outtakeServo.setPosition(0);
+        }
     }
 
     public void twoDump() {
-        outtakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        outtakeServo.setPosition(0.15);
-        sleep(250);
-        outtakeMotor.setPower(0.5);
-        sleep(500);
-        outtakeMotor.setPower(0);
-        outtakeServo.setPosition(0.5);
-        sleep(500);
-        outtakeServo.setPosition(0.15);//down
-        sleep(250);
-        outtakeMotor.setPower(-0.5);
-        sleep(500);
-        outtakeMotor.setPower(0);
-        outtakeServo.setPosition(0);
-        sleep(250);
+        if (frontLeft.isBusy() && frontRight.isBusy()) {}
+        else {
+            outtakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            outtakeServo.setPosition(0.15);
+            sleep(250);
+            outtakeMotor.setPower(0.5);
+            sleep(500);
+            outtakeMotor.setPower(0);
+            outtakeServo.setPosition(0.5);
+            sleep(500);
+            outtakeServo.setPosition(0.15);//down
+            sleep(250);
+            outtakeMotor.setPower(-0.5);
+            sleep(500);
+            outtakeMotor.setPower(0);
+            outtakeServo.setPosition(0);
+            sleep(250);
+        }
     }
 
     public void oneDump() {
-        outtakeServo.setPosition(0.55);
-        sleep(500);
-        outtakeServo.setPosition(0);
-        sleep(250);
-        outtakeServo.setPosition(0);
-        sleep(250);
+        if (frontLeft.isBusy() && frontRight.isBusy()) {}
+        else {
+            outtakeServo.setPosition(0.55);
+            sleep(500);
+            outtakeServo.setPosition(0);
+            sleep(250);
+            outtakeServo.setPosition(0);
+            sleep(250);
+        }
     }
-
 }
