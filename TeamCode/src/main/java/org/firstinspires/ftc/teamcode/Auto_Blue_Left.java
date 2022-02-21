@@ -103,14 +103,14 @@ public class Auto_Blue_Left extends LinearOpMode {
         while (opModeIsActive()) {
             drive(-5, -5, 360); // Move away from the wall
             sleep(250);
-            rotate(50); // Get ready to scan
+            rotate(50, 270); // Get ready to scan
             sleep(250);
-            angleToTeamElement = rotate(-20, 0); // Scan for the team element
+            angleToTeamElement = rotate(-20, 180, 0); // Scan for the team element
             sleep(250);
             if (angleToTeamElement > 35.0) {allianceHubLevel = 1;}
             else if (angleToTeamElement > 14 && angleToTeamElement <35) {allianceHubLevel = 2; }
             else {allianceHubLevel = 3;}
-            telemetry.addData("allianceHubLevel", String.valueOf(allianceHubLevel));
+            telemetry.addData("angleToTeamElement", String.valueOf(angleToTeamElement));
             telemetry.update();
 
             if (allianceHubLevel == 3) {
@@ -119,28 +119,31 @@ public class Auto_Blue_Left extends LinearOpMode {
                 threeDump();
                 drive(5, 5, 360);
                 sleep(250);
-                rotate(-75);
+                rotate(-75, 270);
                 sleep(250);
                 drive(75, 75, 720);
+                sleep(250);
             }
             else if (allianceHubLevel == 2) {
                 drive(-15, -15, 360);
                 sleep(250);
                 twoDump();
                 sleep(250);
-                rotate(-75);
+                rotate(-75, 270);
                 sleep(250);
                 drive(65, 65, 720);
+                sleep(250);
             }
             else if (allianceHubLevel == 1) {
-                drive(-22, -22, 360);
+                drive(-21, -21, 360);
                 sleep(250);
                 oneDump();
                 drive(7, 7, 360);
                 sleep(250);
-                rotate(-75);
+                rotate(-75, 270);
                 sleep(250);
                 drive(65, 65, 720);
+                sleep(250);
             }
             else {
             }
@@ -214,12 +217,12 @@ public class Auto_Blue_Left extends LinearOpMode {
         return lastAngles.firstAngle;
     }
 
-    private void rotate(int degrees) {
-        double temp = rotate(degrees, 0);
+    private void rotate(int degrees, int velocity) {
+        double temp = rotate(degrees, velocity, 0);
         return;
     }
 
-    private double rotate(int degrees, int dummy) {
+    private double rotate(int degrees, int velocity, int dummy) {
         double leftPower, rightPower;
         double currentAngle = 0, currentDistance = 0, minAngle = 0, minDistance = 100;
 
@@ -229,12 +232,12 @@ public class Auto_Blue_Left extends LinearOpMode {
         // clockwise (right).
 
         if (degrees < 0) {   // turn right.
-            leftPower = 270;
-            rightPower = -270;
+            leftPower = velocity;
+            rightPower = -velocity;
         } else if (degrees > 0) {
             // turn left.
-            leftPower = -270;
-            rightPower = 270;
+            leftPower = -velocity;
+            rightPower = velocity;
         } else return 0;
 
         frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

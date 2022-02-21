@@ -123,15 +123,19 @@ public class Auto_Red_Right extends LinearOpMode {
                 rotate(80);
                 sleep(250);
                 drive(50, 50, 720);
+                sleep(250);
             }
             else if (allianceHubLevel == 2) {
                 drive(-15, -15, 360);
                 sleep(250);
                 twoDump();
                 sleep(250);
+                drive(3,3,360);
+                sleep(250);
                 rotate(80);
                 sleep(250);
                 drive(50, 50, 720);
+                sleep(250);
             }
             else if (allianceHubLevel == 1) {
                 drive(-22, -22, 360);
@@ -139,9 +143,12 @@ public class Auto_Red_Right extends LinearOpMode {
                 oneDump();
                 drive(7, 7, 360);
                 sleep(250);
-                rotate(90);
+                drive(3,3,360);
+                sleep(250);
+                rotate(80);
                 sleep(250);
                 drive(50, 50, 720);
+                sleep(250);
             }
             else {
             }

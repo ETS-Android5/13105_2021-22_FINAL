@@ -110,14 +110,15 @@ public class Auto_Red_Left extends LinearOpMode {
             if (angleToTeamElement > 35.0) {allianceHubLevel = 1;}
             else if (angleToTeamElement > 14 && angleToTeamElement < 35) {allianceHubLevel = 2; }
             else {allianceHubLevel = 3;}
-            telemetry.addData("allianceHubLevel", String.valueOf(allianceHubLevel));
+            telemetry.addData("allianceHubLevel", String.valueOf(angleToTeamElement));
             telemetry.update();
+            //sleep(30000);
 
             if (allianceHubLevel == 3) {
                 drive(-23, -23,360);
                 sleep(250);
                 threeDump();
-                drive(10, 10, 360);
+                drive(11, 11, 360);
                 sleep(250);
                 carousel();
                 sleep(250);
@@ -127,15 +128,15 @@ public class Auto_Red_Left extends LinearOpMode {
                 sleep(250);
                 twoDump();
                 sleep(250);
-                drive(2,2,360);
+                drive(3,3,360);
                 carousel();
                 sleep(250);
             }
             else if (allianceHubLevel == 1) {
-                drive(-22, -22, 360);
+                drive(-20, -20, 360);
                 sleep(250);
                 oneDump();
-                drive(9, 9, 360);
+                drive(8, 8, 360);
                 sleep(250);
                 carousel();
                 sleep(250);
@@ -360,7 +361,7 @@ public class Auto_Red_Left extends LinearOpMode {
         drive(10, 10, 360);
         sleep(250);
         rotate(100);
-        drive(-8, -8, 180);
+        drive(-10, -10, 180);
         capperMotor.setPower(-0.5);
         sleep(900);
         capperMotor.setPower(0);

@@ -105,7 +105,7 @@ public class Auto_Blue_Right extends LinearOpMode {
             sleep(250);
             rotate(-30); // Get ready to scan
             sleep(250);
-            angleToTeamElement = rotate(20, 0); // Scan for the team element
+            angleToTeamElement = rotate(18, 0); // Scan for the team element
             sleep(250);
             if (angleToTeamElement < -10) {allianceHubLevel = 3;}
             else if (angleToTeamElement > -10 && angleToTeamElement < 10) {allianceHubLevel = 2;}

@@ -64,27 +64,29 @@ public class Teleop extends LinearOpMode {
         double servoPosition = 100;
         double encoderCount = 0;
 
+
         waitForStart();
         runtime.reset();
 
         while (opModeIsActive()) {
 
-            // drivePower is the power for forward/backward movement
-            // rotatePower is the power for rotating the robot
-            float drivePower = -gamepad1.left_stick_y;
-            float rotatePower = gamepad1.right_stick_x;
+                // drivePower is the power for forward/backward movement
+                // rotatePower is the power for rotating the robot
+                float drivePower = -gamepad1.left_stick_y;
+                float rotatePower = gamepad1.right_stick_x;
 
-            telemetry.addData("drivePower", String.valueOf(drivePower));
-            telemetry.addData("rotatePower", String.valueOf(rotatePower));
+                rotatePower = rotatePower/2;
+                drivePower = drivePower/2;
 
-            //drivePower = (float) (drivePower*(0.1));
-            //rotatePower = (float) (rotatePower*(0.1));
 
-            // Flip these signs if the robot rotates the wrong way
-            frontLeft.setPower(drivePower + rotatePower);
-            frontRight.setPower(drivePower - rotatePower);
-            backLeft.setPower(drivePower + rotatePower);
-            backRight.setPower(drivePower - rotatePower);
+                telemetry.addData("drivePower", String.valueOf(drivePower));
+                telemetry.addData("rotatePower", String.valueOf(rotatePower));
+
+                // Flip these signs if the robot rotates the wrong way
+                frontLeft.setPower(drivePower + rotatePower);
+                frontRight.setPower(drivePower - rotatePower);
+                backLeft.setPower(drivePower + rotatePower);
+                backRight.setPower(drivePower - rotatePower);
 
             if (backStop.getDistance(DistanceUnit.INCH) < 6) {
                 frontLeft.setPower(0);
@@ -93,84 +95,54 @@ public class Teleop extends LinearOpMode {
                 backLeft.setPower(0);
             }
 
-            encoderCount = outtakeMotor.getCurrentPosition();
-
             while (gamepad1.dpad_up) {
-                frontLeft.setPower(0.25);
-                frontRight.setPower(0.25);
-                backLeft.setPower(0.25);
-                backRight.setPower(0.25);
+                frontLeft.setPower(1);
+                frontRight.setPower(1);
+                backLeft.setPower(1);
+                backRight.setPower(1);
             }
             while (gamepad1.dpad_down) {
-                frontLeft.setPower(-0.25);
-                frontRight.setPower(-0.25);
-                backLeft.setPower(-0.25);
-                backRight.setPower(-0.25);
+                frontLeft.setPower(-1);
+                frontRight.setPower(-1);
+                backLeft.setPower(-1);
+                backRight.setPower(-1);
             }
 
-            if (gamepad1.a) {
-                intakeMotor.setPower(1);
-            } else if (gamepad1.b) {
-                intakeMotor.setPower(-1);
-            } else {
-                intakeMotor.setPower(0);
-            }
+            if (gamepad1.a) {intakeMotor.setPower(1);}
+                else if (gamepad1.b) {intakeMotor.setPower(-1);}
+                    else {intakeMotor.setPower(0);}
+
+            if (gamepad2.right_stick_y < 0) {outtakeServo.setPosition(0.15);}
+
+            if (gamepad2.left_bumper) {capperMotor.setPower(0.25);}
+                else if (gamepad2.right_bumper) {capperMotor.setPower(-0.25);}
+                    else {capperMotor.setPower(0);}
+
+            if (gamepad2.a) {carouselMotor.setPower(-0.5);}
+                else if (gamepad2.b) {carouselMotor.setPower(0.5);}
+                    else {carouselMotor.setPower(0);}
+
+            if (gamepad2.dpad_up && drivePower == 0 && rotatePower == 0) {threeDump();}
+
+            if (gamepad2.x && drivePower == 0 && rotatePower == 0) {twoDump();}
+
+            if (gamepad2.y && drivePower == 0 && rotatePower == 0) {oneDump();}
+
+            if (gamepad2.dpad_down) {outtakeServo.setPosition(0);}
+
+            if (gamepad2.dpad_left) {capperServo.setPosition(0);}
+
+            if (gamepad2.dpad_right) {capperServo.setPosition(0.5);}
 
             outtakeMotor.setPower(gamepad2.left_stick_y * 0.5);
 
-            if (gamepad2.right_stick_y < 0) {
-                outtakeServo.setPosition(0.15);
-            }
-
-            if (gamepad2.left_bumper) {
-                capperMotor.setPower(0.25);
-            } else if (gamepad2.right_bumper) {
-                capperMotor.setPower(-0.25);
-            } else {
-                capperMotor.setPower(0);
-            }
-
-            if (gamepad2.a) {
-                carouselMotor.setPower(-0.5);
-            } else if (gamepad2.b) {
-                carouselMotor.setPower(0.5);
-            } else {
-                carouselMotor.setPower(0);
-            }
-
-            if (gamepad2.dpad_up) {
-                threeDump();
-            }
-            if (gamepad2.x) {
-                twoDump();
-            }
-            if (gamepad2.y) {
-                oneDump();
-            }
-
-            if (gamepad2.dpad_down) {
-                outtakeServo.setPosition(0);
-            }
-
-            if (gamepad2.dpad_left) {
-                capperServo.setPosition(0);
-            }
-
-            if (gamepad2.dpad_right) {
-                capperServo.setPosition(0.5);
-            }
-
-            // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("servoPosition", String.valueOf(servoPosition));
             telemetry.update();
             idle();
         }
     }
 
     public void threeDump() {
-        if (frontLeft.isBusy() && frontRight.isBusy()) {}
-        else {
             outtakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             outtakeServo.setPosition(0.15);
             sleep(250);
@@ -189,7 +161,6 @@ public class Teleop extends LinearOpMode {
             outtakeMotor.setPower(0);
             outtakeServo.setPosition(0);
         }
-    }
 
     public void twoDump() {
         if (frontLeft.isBusy() && frontRight.isBusy()) {}
