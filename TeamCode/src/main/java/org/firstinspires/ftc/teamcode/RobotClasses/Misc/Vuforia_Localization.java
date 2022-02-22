@@ -15,6 +15,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Gyro;
+import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Standard_Bot;
+import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.TankDrive;
 
 //This OpMode was written for the VuforiaDemo Basics video. This demonstrates basic principles of
 //using VuforiaDemo in FTC.
@@ -22,7 +25,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 public class
 
 Vuforia_Localization {
- /*   // Variables to be used for later
+
+    Standard_Bot robot = new Standard_Bot();
+    TankDrive drivetrain = new TankDrive();
+    Gyro gyro = new Gyro();
+
+    // Variables to be used for later
     private VuforiaLocalizer vuforiaLocalizer;
     private VuforiaLocalizer.Parameters parameters;
     private VuforiaTrackables visionTargets;
@@ -46,8 +54,6 @@ Vuforia_Localization {
     double                  globalAngle;
     final double            GAIN = 0.05;
     private ElapsedTime     runtime = new ElapsedTime();
-
-    Standard_Bot robot = new Standard_Bot();   // Use a StandardBot's hardware
 
     public void VuforiaOrient (double targetX, double targetY, double targetAngle) {
         double correctionX = 0;
@@ -78,7 +84,7 @@ Vuforia_Localization {
         speedY = Math.abs((targetY-robotY)/targetY)*0.15;
         correctionY = (targetY - robotY)*1.25;
         correctionY = correctionY/25.4;
-        TankDrive.drive(-correctionY, speedY); //Correction Y needs to be negative because the camera is mounted off the back and the y-axis of the robot is opposite of that of the picture's
+        drivetrain.drive(-correctionY, -correctionY, speedY); //Correction Y needs to be negative because the camera is mounted off the back and the y-axis of the robot is opposite of that of the picture's
         gainY = 0;
         speedY = 0;
         correctionY = 0;
@@ -90,14 +96,14 @@ Vuforia_Localization {
         correctionX = ((targetX - robotX)*1.25);
         correctionX = (correctionX/25.4);
         if (correctionX > 0) {
-            TankDrive.rotate(-90, speedX);
-            TankDrive.drive(correctionX, speedX);
-            TankDrive.rotate(90, speedX);
+            drivetrain.rotate(-90, speedX);
+            drivetrain.drive(correctionX, correctionX, speedX);
+            drivetrain.rotate(90, speedX);
         }
         else if(correctionX < 0) {
-            TankDrive.turn(90, speedY);
-            TankDrive.drive(correctionX, speedX);
-            TankDrive.turn(-90, speedY);
+            drivetrain.rotate(90, speedY);
+            drivetrain.drive(correctionX, correctionX, speedX);
+            drivetrain.rotate(-90, speedY);
         }
         gainX = 0;
         speedX = 0;
@@ -108,7 +114,7 @@ Vuforia_Localization {
         gainAngle = gainAngle + 1;
         speedAngle = Math.abs((targetAngle-robotAngle)/targetAngle)*1.25;
         correctionAngle = ((targetAngle - robotAngle)*1.25);
-        TankDrive.turn(correctionAngle, speedAngle);
+        drivetrain.rotate(correctionAngle, speedAngle);
         gainAngle = 0;
         speedAngle = 0;
         correctionAngle = 0;
@@ -130,7 +136,7 @@ Vuforia_Localization {
 
         // Setup the target to be tracked
         target = visionTargets.get(0); // 0 corresponds to the wheels target
-        target.setName("Wheels Target");
+        target.setName();
         target.setLocation(createMatrix(0, 0, 0, 90, 0, 0));
 
         // Set phone location on robot
@@ -150,5 +156,4 @@ Vuforia_Localization {
     }
 
     // Formats a matrix into a readable string
-*/
 }

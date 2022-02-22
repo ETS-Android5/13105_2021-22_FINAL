@@ -64,12 +64,12 @@ public class TankDrive {
         backRight.setVelocity(0, AngleUnit.DEGREES);
 
     }
-    public void rotate(int degrees) {
-        double temp = rotate(degrees, 0);
+    public void rotate(double degrees, double velocity) {
+        double temp = rotate(degrees, velocity, 0);
         return;
     }
 
-    public double rotate(int degrees, int dummy) {
+    private double rotate(double degrees, double velocity, int dummy) {
         double leftPower, rightPower;
         double currentAngle = 0, currentDistance = 0, minAngle = 0, minDistance = 100;
 
@@ -79,12 +79,12 @@ public class TankDrive {
         // clockwise (right).
 
         if (degrees < 0) {   // turn right.
-            leftPower = 270;
-            rightPower = -270;
+            leftPower = velocity;
+            rightPower = -velocity;
         } else if (degrees > 0) {
             // turn left.
-            leftPower = -270;
-            rightPower = 270;
+            leftPower = -velocity;
+            rightPower = velocity;
         } else return 0;
 
         frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
