@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import org.firstinspires.ftc.teamcode.RobotClasses.Misc.Vuforia_Localization;
 import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Standard_Bot;
+import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.TFOD;
 import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.TankDrive;
 import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Gyro;
 
@@ -28,6 +30,7 @@ public class Test_Auto extends LinearOpMode {
     TankDrive drivetrain = new TankDrive();
     Gyro gyro = new Gyro();
     Vuforia_Localization vulocal = new Vuforia_Localization();
+    TFOD tfod = new TFOD();
 
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotorImplEx frontLeft = null;
@@ -104,7 +107,7 @@ public class Test_Auto extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            vulocal.VuforiaOrient(0,0,0);
+            tfod.findObject("block", 0, 0, 0, 0);
 
             telemetry.update();
             break;

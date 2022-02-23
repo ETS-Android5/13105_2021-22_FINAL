@@ -30,6 +30,7 @@ public class Working_Vuforia extends LinearOpMode
     private VuforiaTrackables visionTargets;
     private VuforiaTrackable target;
     private VuforiaTrackableDefaultListener listener;
+
     private double targetX = 1;
     private double targetY = -533;
     private double targetAngle = 1;
@@ -42,6 +43,8 @@ public class Working_Vuforia extends LinearOpMode
     private double speedX = 0;
     private double gainAngle = 0;
     private double speedAngle = 0;
+
+
     public void encoderDrive( double power, double leftInches,
                               double rightInches, int timeout)
     {
@@ -191,20 +194,28 @@ public class Working_Vuforia extends LinearOpMode
     {
         // Setup parameters to create localizer
         parameters = new VuforiaLocalizer.Parameters(); // To remove the camera view from the screen, remove the R.id.cameraMonitorViewId
+
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
+
         parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+
         parameters.useExtendedTracking = false;
+
         vuforiaLocalizer = ClassFactory.createVuforiaLocalizer(parameters);
+
         // These are the vision targets that we want to use
         // The string needs to be the name of the appropriate .xml file in the assets folder
-        visionTargets = vuforiaLocalizer.loadTrackablesFromAsset("Cube");
-        Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, 4);
+        visionTargets = vuforiaLocalizer.loadTrackablesFromFile("Cube.dat" + "Cube.xml");
+        Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, 1);
+
         // Setup the target to be tracked
         target = visionTargets.get(0); // 0 corresponds to the wheels target
         target.setName("Cube");
         target.setLocation(createMatrix(0, 0, 0, 90, 0, 0));
+
         // Set phone location on robot
         phoneLocation = createMatrix(0, -229, 0, -90, 0, 0);
+
         // Setup listener and inform it of phone information
         listener = (VuforiaTrackableDefaultListener) target.getListener();
         listener.setPhoneInformation(phoneLocation, parameters.cameraDirection);

@@ -1,10 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
-<QCARConfig>
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="qcar_config.xsd">
     <Tracking>
-        <ModelTarget name="Cube" trackingMode="default" motionHint="adaptive" upVector="0.0 0.0 1.0"></ModelTarget>
+        <ImageTarget name="Cube" size="50.8000000 50.8000000" />
     </Tracking>
-    <Assembly name="Cube" assemblyId="db2b33e161014a72be5fba0abd54e897">
-        <Part name="Cube" translation="0 0 0" rotation="AD: 0 0 1 0"></Part>
-        <EntryPoint name="(none)" trained="yes"></EntryPoint>
-    </Assembly>
 </QCARConfig>
+
+
+    <!--<?xml version="1.0" encoding="UTF-8"?>-->
+<!--<QCARConfig>-->
+<!--<Tracking>-->
+<!--<ImageTarget name="am-4508FTC2inCube" motionHint="static" trackingMode="default"/>-->
+<!---->
+<!--</Tracking>-->
+<!---->
+<!--<Assembly name="am-4508FTC2inCubes_assembly" assemblyId="64a58a48a5d0420e91fc4f771726e493">-->
+<!--<Part name="am-4508FTC2inCube" translation="0 0 0" rotation="AD: 0 0 1 0"/>-->
+<!--<EntryPoint name="viewpoint_0000" translation="5.58793e-09 -5.18173e-05 0.132056" rotation="AD: 0.698614 1.6866 -0.871791 159.759" trained="no">-->
+<!---->
+<!--</EntryPoint>-->
+<!---->
+<!--</Assembly>-->
+<!---->
+<!--</QCARConfig>-->
