@@ -56,15 +56,9 @@ Vuforia_Localization {
     private ElapsedTime     runtime = new ElapsedTime();
 
     public void VuforiaOrient (double targetX, double targetY, double targetAngle) {
-        double correctionX = 0;
-        double correctionY = 0;
-        double correctionAngle = 0;
-        double gainY = 0;
-        double speedY = 0;
-        double gainX = 0;
-        double speedX = 0;
-        double gainAngle = 0;
-        double speedAngle = 0;
+        double correctionX = 0, correctionY = 0, correctionAngle = 0, gainY = 0,
+                speedY = 0, gainX = 0, speedX = 0, gainAngle = 0, speedAngle = 0;
+
         lastKnownLocation = createMatrix(0, 0, 0, 0, 0, 0);
         visionTargets.activate();
         OpenGLMatrix latestLocation = listener.getUpdatedRobotLocation();
@@ -84,7 +78,7 @@ Vuforia_Localization {
         speedY = Math.abs((targetY-robotY)/targetY)*0.15;
         correctionY = (targetY - robotY)*1.25;
         correctionY = correctionY/25.4;
-        drivetrain.drive(-correctionY, -correctionY, speedY); //Correction Y needs to be negative because the camera is mounted off the back and the y-axis of the robot is opposite of that of the picture's
+        drivetrain.drive(correctionY, correctionY, speedY); //Correction Y needs to be negative because the camera is mounted off the back and the y-axis of the robot is opposite of that of the picture's
         gainY = 0;
         speedY = 0;
         correctionY = 0;
@@ -131,12 +125,12 @@ Vuforia_Localization {
 
         // These are the vision targets that we want to use
         // The string needs to be the name of the appropriate .xml file in the assets folder
-        visionTargets = vuforiaLocalizer.loadTrackablesFromAsset("FTC_2016-17");
+        visionTargets = vuforiaLocalizer.loadTrackablesFromAsset("cube");
         Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, 4);
 
         // Setup the target to be tracked
         target = visionTargets.get(0); // 0 corresponds to the wheels target
-        target.setName();
+        target.setName("Cube");
         target.setLocation(createMatrix(0, 0, 0, 90, 0, 0));
 
         // Set phone location on robot

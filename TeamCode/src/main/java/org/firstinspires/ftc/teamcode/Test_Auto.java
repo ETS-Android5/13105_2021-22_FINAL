@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+import org.firstinspires.ftc.teamcode.RobotClasses.Misc.Vuforia_Localization;
 import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Standard_Bot;
 import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.TankDrive;
 import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Gyro;
@@ -26,6 +27,7 @@ public class Test_Auto extends LinearOpMode {
     Standard_Bot robot = new Standard_Bot();
     TankDrive drivetrain = new TankDrive();
     Gyro gyro = new Gyro();
+    Vuforia_Localization vulocal = new Vuforia_Localization();
 
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotorImplEx frontLeft = null;
@@ -101,12 +103,10 @@ public class Test_Auto extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            sleep(250);
-            rotate(50, 270); // Get ready to scan
-            sleep(250);
-            angleToTeamElement = rotate(-20, 180, 0); // Scan for the team element
-            sleep(250);
-            rotate((int) angleToTeamElement, 270) ;
+
+            vulocal.VuforiaOrient(0,0,0);
+
+            telemetry.update();
             break;
         }
 
@@ -173,12 +173,12 @@ public class Test_Auto extends LinearOpMode {
         return lastAngles.firstAngle;
     }
 
-    private void rotate(int degrees, int velocity) {
-        double temp = rotate(degrees, velocity, 0);
+    private void rotate(int degrees) {
+        double temp = rotate(degrees, 0);
         return;
     }
 
-    private double rotate(int degrees, int velocity, int dummy) {
+    private double rotate(int degrees, int dummy) {
         double leftPower, rightPower;
         double currentAngle = 0, currentDistance = 0, minAngle = 0, minDistance = 100;
 
@@ -188,12 +188,12 @@ public class Test_Auto extends LinearOpMode {
         // clockwise (right).
 
         if (degrees < 0) {   // turn right.
-            leftPower = velocity;
-            rightPower = -velocity;
+            leftPower = 270;
+            rightPower = -270;
         } else if (degrees > 0) {
             // turn left.
-            leftPower = -velocity;
-            rightPower = velocity;
+            leftPower = -270;
+            rightPower = 270;
         } else return 0;
 
         frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -225,6 +225,11 @@ public class Test_Auto extends LinearOpMode {
             while (opModeIsActive() && getAngle() == 0) {
             }
             while (opModeIsActive() && (currentAngle = getAngle()) < degrees) {
+                currentDistance = sensorRange.getDistance(DistanceUnit.INCH);
+                if (currentDistance < minDistance) {
+                    minDistance = currentDistance;
+                    minAngle = currentAngle;
+                }
             }
         }
         // turn the motors off.
