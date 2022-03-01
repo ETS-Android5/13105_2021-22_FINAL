@@ -8,14 +8,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class TankDrive {
-    Standard_Bot robot = new Standard_Bot();
+    static Standard_Bot robot = new Standard_Bot();
     Gyro gyro = new Gyro();
 
-    private static DcMotorImplEx frontRight;
-    private static DcMotorImplEx frontLeft;
-    private static DcMotorImplEx backRight;
-    private static DcMotorImplEx backLeft;
+    private static DcMotorImplEx frontRight = robot.StdFrontRight;
+    private static DcMotorImplEx frontLeft = robot.StdFrontLeft;
+    private static DcMotorImplEx backRight = robot.StdBackRight;
+    private static DcMotorImplEx backLeft = robot.StdBackLeft;
     DistanceSensor sensorRange;
+
     public void drive(double right, double left, double anglrt) {
 
         int rightTarget;

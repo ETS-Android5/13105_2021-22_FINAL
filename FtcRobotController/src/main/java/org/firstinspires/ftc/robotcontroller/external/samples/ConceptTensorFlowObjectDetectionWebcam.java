@@ -38,6 +38,9 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+//import org.firstinspires.ftc.robotcontroller.external.samples.Standard_Bot;
+//import org.firstinspires.ftc.robotcontroller.external.samples.TankDrive;
+//import org.firstinspires.ftc.robotcontroller.external.samples.Gyro;
 
 /**
  * This 2020-2021 OpMode illustrates the basics of using the TensorFlow Object Detection API to
@@ -49,9 +52,22 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@TeleOp(name = "Concept: TensorFlow Object Detection Webcam", group = "Concept")
 
+@TeleOp(name = "Concept: TensorFlow Object Detection Webcam", group = "Concept")
+@Disabled
 public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
+
+//    TankDrive drivetrain = new TankDrive();
+//    Standard_Bot robot = new Standard_Bot();
+//    Gyro gyro = new Gyro();
+
+    String object = null, targetObject = "cube";
+    double currentLeft = 0, currentRight = 0, currentTop = 0, currentBottom = 0;
+    double targetTop = 400;
+    double targetBottom = 0;
+    double targetLeft = 0;
+    double targetRight = 0;
+
   /* Note: This sample uses the all-objects Tensor Flow model (FreightFrenzy_BCDM.tflite), which contains
    * the following 4 detectable objects
    *  0: Ball,
@@ -118,39 +134,48 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
-            tfod.setZoom(1, 16.0/9.0);
+            tfod.setZoom(1, 16.0 / 9.0);
         }
 
-        /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
         waitForStart();
 
-        if (opModeIsActive()) {
-            while (opModeIsActive()) {
-                if (tfod != null) {
-                    // getUpdatedRecognitions() will return null if no new information is available since
-                    // the last time that call was made.
-                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                    if (updatedRecognitions != null) {
-                      telemetry.addData("# Object Detected", updatedRecognitions.size());
-                      // step through the list of recognitions and display boundary info.
-                      int i = 0;
-                      for (Recognition recognition : updatedRecognitions) {
-                        telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                        telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-                                recognition.getLeft(), recognition.getTop());
-                        telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-                                recognition.getRight(), recognition.getBottom());
-                        i++;
-                      }
-                      telemetry.update();
+    while (opModeIsActive()) {
+        // getUpdatedRecognitions() will return null if no new information is available since
+        // the last time that call was made.
+        List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+        if (updatedRecognitions != null) {
+            telemetry.addData("# Object Detected", updatedRecognitions.size());
+            int i = 0;
+            for (Recognition recognition : updatedRecognitions) {
+                object = recognition.getLabel();
+                    currentLeft = recognition.getLeft();
+                    currentRight = recognition.getRight();
+                    currentTop = recognition.getTop();
+                    currentBottom = recognition.getBottom();
+
+                    telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                    telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+                            recognition.getLeft(), recognition.getTop());
+                    telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                            recognition.getRight(), recognition.getBottom());
+
+                    if (currentTop != targetTop) {
+                        drive(targetTop - currentTop, targetTop - currentTop, 360);
+                        sleep(250);
                     }
                 }
             }
         }
+        telemetry.update();
+        sleep(250);
+        idle();
     }
 
+    private void drive(double v, double v1, int i) {
+    }
+//}
     /**
      * Initialize the Vuforia localization engine.
      */
