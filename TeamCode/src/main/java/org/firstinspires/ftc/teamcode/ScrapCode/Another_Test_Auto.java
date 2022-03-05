@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.ScrapCode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -23,11 +22,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.teamcode.RobotClasses.Misc.Vuforia_Localization;
 import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Standard_Bot;
-import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.TFOD;
 import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.TankDrive;
-import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Gyro;
 
 import java.util.List;
 
@@ -61,10 +57,11 @@ public class Another_Test_Auto extends LinearOpMode {
     int i = 0;
 
    // private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
-    private static final String TFOD_MODEL_ASSET = "model_unquant.tflite";
+    private static final String TFOD_MODEL_ASSET = "model_20220305_105857.tflite";
 
     private static final String[] LABELS = {
-            "0 Blue Left"
+            "BlueHub",
+            "RedHub"
     };
 
     private static final String VUFORIA_KEY =
@@ -160,11 +157,13 @@ public class Another_Test_Auto extends LinearOpMode {
                             recognition.getLeft(), recognition.getTop());
                     telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
                             recognition.getRight(), recognition.getBottom());
+                    telemetry.update();
+                    sleep(250);
 
-                    if (currentTop != targetTop) {
-                        drive(targetTop - currentTop, targetTop - currentTop, 360);
-                        sleep(250);
-                    }
+                    //if (currentTop != targetTop) {
+                    //    drive(targetTop - currentTop, targetTop - currentTop, 360);
+                    //    sleep(250);
+                    //}
                 }
             }
         }

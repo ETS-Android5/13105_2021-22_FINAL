@@ -361,7 +361,7 @@ public class Auto_Red_Left extends LinearOpMode {
         drive(10, 10, 360);
         sleep(250);
         rotate(100);
-        drive(-10, -10, 180);
+        drive(-7, -7, 180);
         capperMotor.setPower(-0.5);
         sleep(900);
         capperMotor.setPower(0);
