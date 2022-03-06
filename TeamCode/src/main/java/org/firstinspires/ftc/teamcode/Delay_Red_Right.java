@@ -20,8 +20,8 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Standard_Bot;
 import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.TankDrive;
 import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Gyro;
 
-@Autonomous(name="Auto_Blue_Right", group="Auto_Blue_Right")
-public class Auto_Blue_Right extends LinearOpMode {
+@Autonomous(name="Delay_Red_Right", group="Delay_Red_Right")
+public class Delay_Red_Right extends LinearOpMode {
 
     Standard_Bot robot = new Standard_Bot();
     TankDrive drivetrain = new TankDrive();
@@ -103,9 +103,9 @@ public class Auto_Blue_Right extends LinearOpMode {
         while (opModeIsActive()) {
             drive(-5, -5, 360); // Move away from the wall
             sleep(250);
-            rotate(-30); // Get ready to scan
+            rotate(-50); // Get ready to scan
             sleep(250);
-            angleToTeamElement = rotate(18, 0); // Scan for the team element
+            angleToTeamElement = rotate(20, 0); // Scan for the team element
             sleep(250);
             if (angleToTeamElement < -10) {allianceHubLevel = 3;}
             else if (angleToTeamElement > -10 && angleToTeamElement < 10) {allianceHubLevel = 2;}
@@ -118,29 +118,40 @@ public class Auto_Blue_Right extends LinearOpMode {
                 drive(-23, -23,360);
                 sleep(250);
                 threeDump();
-                drive(11, 11, 360);
+                drive(9, 9, 360);
                 sleep(250);
-                carousel();
+                rotate(80);
                 sleep(250);
-                }
+                drive(50, 50, 720);
+                sleep(250);
+            }
             else if (allianceHubLevel == 2) {
                 drive(-15, -15, 360);
                 sleep(250);
                 twoDump();
+                sleep(250);
                 drive(3,3,360);
                 sleep(250);
-                carousel();
+                rotate(80);
                 sleep(250);
-                }
+                drive(50, 50, 720);
+                sleep(250);
+            }
             else if (allianceHubLevel == 1) {
                 drive(-22, -22, 360);
                 sleep(250);
                 oneDump();
-                drive(10, 10, 360);
+                drive(7, 7, 360);
                 sleep(250);
-                carousel();
+                drive(3,3,360);
                 sleep(250);
-                }
+                rotate(80);
+                sleep(250);
+                drive(50, 50, 720);
+                sleep(250);
+            }
+            else {
+            }
 
             sleep(1500);
 
@@ -355,24 +366,5 @@ public class Auto_Blue_Right extends LinearOpMode {
         sleep(250);
         outtakeServo.setPosition(0);
         sleep(250);
-    }
-
-    public void carousel() {
-        rotate(-80);
-        drive(-50, -50, 360);
-        sleep(250);
-        drive(5, 5, 360);
-        sleep(250);
-        rotate(-170);
-        drive(-11, -11, 180);
-        capperMotor.setPower(-0.5);
-        sleep(800);
-        capperMotor.setPower(0);
-        sleep(250);
-        carouselMotor.setPower(-0.3);
-        sleep(5000);
-        carouselMotor.setPower(0);
-        sleep(250);
-        drive(19, 19, 360);
     }
 }

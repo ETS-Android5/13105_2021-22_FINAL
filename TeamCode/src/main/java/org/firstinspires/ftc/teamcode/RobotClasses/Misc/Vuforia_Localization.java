@@ -72,16 +72,17 @@ Vuforia_Localization {
         robotY = coordinates[1];
         robotAngle = Orientation.getOrientation(lastKnownLocation, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
 
-        if (Math.abs(targetY - robotY)>10 && listener.isVisible())
-            gainY = Math.abs((targetY-robotY)/targetY);
-        gainY = gainY + 0.75;
-        speedY = Math.abs((targetY-robotY)/targetY)*0.15;
-        correctionY = (targetY - robotY)*1.25;
-        correctionY = correctionY/25.4;
-        drivetrain.drive(correctionY, correctionY, speedY); //Correction Y needs to be negative because the camera is mounted off the back and the y-axis of the robot is opposite of that of the picture's
-        gainY = 0;
-        speedY = 0;
-        correctionY = 0;
+        if (Math.abs(targetY - robotY)>10 && listener.isVisible()) {
+            gainY = Math.abs((targetY - robotY) / targetY);
+            gainY = gainY + 0.75;
+            speedY = Math.abs((targetY - robotY) / targetY) * 0.15;
+            correctionY = (targetY - robotY) * 1.25;
+            correctionY = correctionY / 25.4;
+            drivetrain.drive(correctionY, correctionY, speedY); //Correction Y needs to be negative because the camera is mounted off the back and the y-axis of the robot is opposite of that of the picture's
+            gainY = 0;
+            speedY = 0;
+            correctionY = 0;
+        }
 
         if (Math.abs(targetX - robotX)>10 && listener.isVisible())
             gainX = Math.abs((targetX-robotX)/targetX);

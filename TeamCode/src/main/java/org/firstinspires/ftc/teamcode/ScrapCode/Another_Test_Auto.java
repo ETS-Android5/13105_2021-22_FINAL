@@ -46,15 +46,18 @@ public class Another_Test_Auto extends LinearOpMode {
     private Servo outtakeServo = null;
     private Servo capperServo = null;
 
-    String object = null, targetObject = "0 Blue Left";
-    double currentLeft = 0, currentRight = 0, currentTop = 0, currentBottom = 0;
-    double targetTop = 1;
-    double targetBottom = 0;
-    double targetLeft = -250;
-    double targetRight = 0;
+    String object = null, targetObject = "BlueHub";
+    double currentX = 0, currentY = 0;
+    double targetTop = 400;
+    double targetLeft = 400;
+    double targetY = 25;
+    double targetX = 200;
     double distance = 0;
     double angle = 0;
+    double currentLeft = 0;
+    double currentTop = 0;
     int i = 0;
+    double angleToTeamElement = 0;
 
    // private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
     private static final String TFOD_MODEL_ASSET = "model_20220305_105857.tflite";
@@ -117,8 +120,6 @@ public class Another_Test_Auto extends LinearOpMode {
         double allianceHubLevel = 0;
         double angleToTeamElement = 0;
 
-        telemetry.addData("ready", "");
-
         frontLeft.setVelocity(0, AngleUnit.DEGREES);
         frontRight.setVelocity(0, AngleUnit.DEGREES);
         backLeft.setVelocity(0, AngleUnit.DEGREES);
@@ -136,36 +137,84 @@ public class Another_Test_Auto extends LinearOpMode {
             tfod.setZoom(1, 16.0 / 9.0);
         }
 
+        i = 0;
+
+        telemetry.addData("ready", "");
+
         waitForStart();
 
+        targetX = 380;
+        currentX = 0;
+
         while (opModeIsActive()) {
-            // getUpdatedRecognitions() will return null if no new information is available since
-            // the last time that call was made.
-            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-            if (updatedRecognitions != null) {
-                telemetry.addData("# Object Detected", updatedRecognitions.size());
-                int i = 0;
-                for (Recognition recognition : updatedRecognitions) {
-                    object = recognition.getLabel();
-                    currentLeft = recognition.getLeft();
-                    currentRight = recognition.getRight();
-                    currentTop = recognition.getTop();
-                    currentBottom = recognition.getBottom();
 
-                    telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                    telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-                            recognition.getLeft(), recognition.getTop());
-                    telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-                            recognition.getRight(), recognition.getBottom());
+            drive(-5, -5, 360); // Move away from the wall
+            sleep(250);
+            rotate(-30, 360); // Get ready to scan
+            sleep(250);
+            angleToTeamElement = rotate(20, 180, 0); // Scan for the team element
+            sleep(250);
+            if (angleToTeamElement < -10) {allianceHubLevel = 3;}
+            else if (angleToTeamElement > -10 && angleToTeamElement < 10) {allianceHubLevel = 2;}
+            else {allianceHubLevel = 1;}
+            telemetry.addData("angleToTeamElement", String.valueOf(angleToTeamElement));
+            telemetry.update();
+            sleep(1000);
+
+            if (tfod != null) {
+                // getUpdatedRecognitions() will return null if no new information is available since
+                // the last time that call was made.
+                List<Recognition> updatedRecognitions;
+
+                while(currentX < targetX){
+                    updatedRecognitions = tfod.getUpdatedRecognitions();
+                    if (updatedRecognitions != null) {
+                        telemetry.addData("# Object Detected", updatedRecognitions.size());
+                        // step through the list of recognitions and display boundary info.
+                        int i = 0;
+                        for (Recognition recognition : updatedRecognitions) {
+                            if (recognition.getLabel().equals("BlueHub")) {
+                                //rotate to the correct angle
+                                angle = -Math.atan2(targetTop- currentTop, targetLeft - currentLeft);
+                                rotate(angle, 90);
+                                telemetry.addData("angle", angle);
+                                //drive the hypotnuse
+                                currentX = recognition.getRight() - recognition.getLeft();
+                                frontLeft.setPower(-0.2);
+                                frontRight.setPower(-0.2);
+                                backLeft.setPower(-0.2);
+                                backRight.setPower(-0.2);
+                                sleep(50);
+                                telemetry.addData("currentX", currentX);
+                                telemetry.update();
+                                i++;
+                            }
+                        }
                     telemetry.update();
-                    sleep(250);
-
-                    //if (currentTop != targetTop) {
-                    //    drive(targetTop - currentTop, targetTop - currentTop, 360);
-                    //    sleep(250);
-                    //}
+                    }
                 }
+                frontLeft.setPower(0);
+                frontRight.setPower(0);
+                backLeft.setPower(0);
+                backRight.setPower(0);
             }
+
+            if (allianceHubLevel == 3) {
+                threeDump();
+                drive(11, 11, 360);
+                sleep(250);
+            }
+            else if (allianceHubLevel == 2) {
+                twoDump();
+                drive(3, 3, 360);
+                sleep(250);
+            }
+            else if (allianceHubLevel == 1) {
+                oneDump();
+                drive(10, 10, 360);
+                sleep(250);
+            }
+            break;
         }
     }
 

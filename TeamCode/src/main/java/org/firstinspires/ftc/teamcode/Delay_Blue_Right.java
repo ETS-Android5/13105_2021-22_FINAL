@@ -20,8 +20,8 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Standard_Bot;
 import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.TankDrive;
 import org.firstinspires.ftc.teamcode.RobotClasses.Subsytems.Gyro;
 
-@Autonomous(name="Auto_Blue_Right", group="Auto_Blue_Right")
-public class Auto_Blue_Right extends LinearOpMode {
+@Autonomous(name="Delay_Blue_Right", group="Delay_Blue_Right")
+public class Delay_Blue_Right extends LinearOpMode {
 
     Standard_Bot robot = new Standard_Bot();
     TankDrive drivetrain = new TankDrive();
@@ -101,6 +101,7 @@ public class Auto_Blue_Right extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            sleep(8000);
             drive(-5, -5, 360); // Move away from the wall
             sleep(250);
             rotate(-30); // Get ready to scan
@@ -122,7 +123,7 @@ public class Auto_Blue_Right extends LinearOpMode {
                 sleep(250);
                 carousel();
                 sleep(250);
-                }
+            }
             else if (allianceHubLevel == 2) {
                 drive(-15, -15, 360);
                 sleep(250);
@@ -131,7 +132,7 @@ public class Auto_Blue_Right extends LinearOpMode {
                 sleep(250);
                 carousel();
                 sleep(250);
-                }
+            }
             else if (allianceHubLevel == 1) {
                 drive(-22, -22, 360);
                 sleep(250);
@@ -140,7 +141,7 @@ public class Auto_Blue_Right extends LinearOpMode {
                 sleep(250);
                 carousel();
                 sleep(250);
-                }
+            }
 
             sleep(1500);
 
