@@ -101,6 +101,7 @@ public class Delay_Red_Right extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            sleep(6000);
             drive(-5, -5, 360); // Move away from the wall
             sleep(250);
             rotate(-50); // Get ready to scan
